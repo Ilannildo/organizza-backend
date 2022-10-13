@@ -8,10 +8,7 @@
     "outDir": "./dist",
     "types": ["@types/node"],
     "rootDir": "./src",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/@types"
-    ],
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
