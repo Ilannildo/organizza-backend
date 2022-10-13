@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "module": "commonjs",
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "types": ["@types/node"],
+    "rootDir": "./src",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types"
+    ],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"]
+}
