@@ -1,6 +1,6 @@
 import { uuid } from "uuidv4";
 
-export class User {
+export class UserModel {
   public readonly uid: string;
   public name: string;
   public email: string;
@@ -16,11 +16,15 @@ export class User {
   public updated_at?: Date;
   public deleted_at?: Date;
 
-  constructor(props: Omit<User, "uid">, uid?: string) {
+  constructor(props: Omit<UserModel, "uid">, uid?: string) {
     Object.assign(this, props);
 
     if (!uid) {
       this.uid = uuid();
     }
+  }
+
+  matchesId(id: string) {
+    return this.uid === id;
   }
 }

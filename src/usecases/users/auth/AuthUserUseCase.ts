@@ -2,7 +2,7 @@ import {
   IAuthenticateUseRequest,
   IAuthenticateUseResponse,
 } from "./AuthUserDTO";
-import { compare } from "bcryptjs";
+import { compare, genSaltSync, hash } from "bcryptjs";
 import { GenerateAccessTokenProvider } from "../../../providers/GenerateAccessTokenProvider";
 import { IUsersRepository } from "../../../repositories/interfaces/IUsersrepository";
 
@@ -29,6 +29,9 @@ export class AuthUserUseCase {
         "Sua conta está suspensa. Entre em contato com o administrador"
       );
     }
+
+    const passwordHash = await hash(password, genSaltSync(10));
+    console.log('senha =>', passwordHash);
 
     const passwordMatch = await compare(
       password,

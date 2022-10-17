@@ -4,7 +4,7 @@ services:
   db:
     platform: linux/x86_64
     container_name: organizza-database
-    image: mysql:8.0.31
+    image: mysql:5.7.32
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
