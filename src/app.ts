@@ -4,7 +4,7 @@ import passport from "passport";
 
 import { routes } from "./routes/index";
 import { authSessionMiddleware } from "./utils/middlewares/authSession";
-import { handleJWTAuthentication } from "./usecases/users/utils/strategies/authenticate";
+import { handleJWTAuthentication } from "./utils/strategies/authenticate";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -21,7 +21,7 @@ app.use((request: Request, response: Response, next: NextFunction) =>
 );
 // Add passport's middleware
 app.use(passport.initialize());
-require("./usecases/users/utils/strategies/jwt")(passport);
+require("./utils/strategies/jwt")(passport);
 // Add user authentication JWT middleware
 app.use((request: Request, response: Response, next: NextFunction) =>
   handleJWTAuthentication(request, response, next)

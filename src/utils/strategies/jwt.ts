@@ -1,7 +1,5 @@
-import { NextFunction, Request, Response } from "express";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { client } from "../../../../prisma/client";
-import { ErrorHandler } from "../../../../utils/types/utils/errorHandler";
+import { client } from "../../prisma/client";
 
 // Setup work and export for the JWT passport strategy
 module.exports = (passport: any) => {

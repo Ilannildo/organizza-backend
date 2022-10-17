@@ -1,11 +1,11 @@
 import aclConstructor from "acl";
 import { NextFunction, Request, Response } from "express";
 
-import * as responses from "../../../../../utils/formatters/responses";
-import { HttpStatus } from "../../../../../utils/httpStatus";
-import { Codes } from "../../../../../utils/codes";
+import * as responses from "../../formatters/responses";
+import { HttpStatus } from "../../httpStatus";
+import { Codes } from "../../codes";
 import { UserDI } from "../../interfaces/user.interface";
-import { POLICY_ROLES, roleToPolicy } from "../../../../../utils/roleToPolicy";
+import { POLICY_ROLES, roleToPolicy } from "../../roleToPolicy";
 
 // Using the memory backend
 // console.log(aclConstructor);

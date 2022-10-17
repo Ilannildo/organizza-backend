@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { authUserController } from "../usecases/users/auth";
 import { meUserController } from "../usecases/users/me";
-import * as policies from "../usecases/users/utils/policies/v1/users.policy";
+import * as policies from "../utils/policies/v1/users.policy";
 import { RequestWithAuth } from "../utils/types";
 
 export const routes = Router();

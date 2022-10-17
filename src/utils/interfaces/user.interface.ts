@@ -1,4 +1,4 @@
-import { RoleModel } from "../../../../models/roles.model";
+import { RoleModel } from "../../models/roles.model";
 
 export interface UserDI {
   role?: RoleModel;

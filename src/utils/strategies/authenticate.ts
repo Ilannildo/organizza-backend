@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import passport from "passport";
-import { ErrorHandler } from "../../../../utils/types/utils/errorHandler";
+import { ErrorHandler } from "../types/utils/errorHandler";
 
 
 export function handleJWTAuthentication(
