@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
+import { authUserController } from "../usecases/users/auth";
 
 export const routes = Router();
 
-routes.route("/").get((request: Request, response: Response) => {
-  return response.status(200).json({
-    message: "Hello World Ilannild",
-  });
+// efetua o login do usuário
+routes.route("/api/auth/login").post((request: Request, response: Response) => {
+  return authUserController.handle(request, response);
 });
