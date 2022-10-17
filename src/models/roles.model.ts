@@ -1,4 +1,4 @@
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 import { UserModel } from "./user.model";
 
 export class RoleModel {

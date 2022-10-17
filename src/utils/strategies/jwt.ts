@@ -10,16 +10,18 @@ module.exports = (passport: any) => {
 
   passport.use(
     new JwtStrategy(opts, function (jwt_payload, done) {
+      console.log('Token  id', jwt_payload)
       client.user
         .findFirst({
           where: {
-            uid: jwt_payload.uid,
+            uid: jwt_payload.user_id,
           },
           include: {
             role: true,
           },
         })
         .then((user) => {
+          console.log("Usuário", user);
           if (user) {
             return done(undefined, user);
           } else {

@@ -1,9 +1,9 @@
-import { User } from "../../models/User";
+import { UserModel } from "../../models/user.model";
 import { client } from "../../prisma/client";
 import { IUsersRepository } from "../interfaces/IUsersrepository";
 
 export class UsersRepository implements IUsersRepository {
-  async findById(user_id: string): Promise<User> {
+  async findById(user_id: string): Promise<UserModel> {
     const user = await client.user.findFirst({
       where: {
         uid: user_id,
@@ -21,7 +21,7 @@ export class UsersRepository implements IUsersRepository {
 
     return user;
   }
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<UserModel> {
     const user = await client.user.findFirst({
       where: {
         email: email,
@@ -39,7 +39,7 @@ export class UsersRepository implements IUsersRepository {
 
     return user;
   }
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserModel[]> {
     const users = await client.user.findMany({
       where: {
         deleted_at: null,
@@ -56,7 +56,25 @@ export class UsersRepository implements IUsersRepository {
 
     return users;
   }
-  async save(user: User): Promise<User> {
+
+  async findByPhoneNumber(phone: string): Promise<UserModel> {
+    const userPhone = await client.user.findFirst({
+      where: {
+        phone,
+      },
+      include: {
+        role: true,
+        user_has_address: {
+          include: {
+            address: true,
+          },
+        },
+      },
+    });
+    return userPhone;
+  }
+
+  async save(user: UserModel): Promise<UserModel> {
     const userCreated = await client.user.create({
       data: user,
     });

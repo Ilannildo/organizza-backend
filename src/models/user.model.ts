@@ -1,4 +1,4 @@
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 
 export class UserModel {
   public readonly uid: string;
@@ -7,8 +7,8 @@ export class UserModel {
   public gender: string;
   public phone: string;
   public password: string;
-  public photo_url: string;
-  public name_badge: string;
+  public photo_url?: string;
+  public name_badge?: string;
   public status: boolean;
   public role_id: string;
   public email_verificated_at?: Date;
@@ -22,9 +22,5 @@ export class UserModel {
     if (!uid) {
       this.uid = uuid();
     }
-  }
-
-  matchesId(id: string) {
-    return this.uid === id;
   }
 }

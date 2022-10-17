@@ -1,4 +1,5 @@
-import { User } from "../../../models/User";
+import { UserModel } from "../../../models/user.model";
+
 
 
 export interface IAuthenticateUseRequest {
@@ -8,5 +9,5 @@ export interface IAuthenticateUseRequest {
 
 export interface IAuthenticateUseResponse {
   access_token: string;
-  user: User;
+  user: UserModel;
 }

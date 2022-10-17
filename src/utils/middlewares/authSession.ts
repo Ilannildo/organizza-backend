@@ -9,7 +9,7 @@ export function authSessionMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  const autheticationPaths = ["/api/auth/login", "/api/me"];
+  const autheticationPaths = ["/api/auth/login", "/api/auth/register"];
 
   if (autheticationPaths.includes(req.path)) {
     return next();
