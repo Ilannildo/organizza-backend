@@ -1,4 +1,5 @@
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import { UserModel } from "../../models/user.model";
 import { client } from "../../prisma/client";
 
 // Setup work and export for the JWT passport strategy
@@ -20,7 +21,7 @@ module.exports = (passport: any) => {
             role: true,
           },
         })
-        .then((user) => {
+        .then((user: UserModel) => {
           console.log("Usuário", user);
           if (user) {
             return done(undefined, user);

@@ -41,7 +41,7 @@ model Role {
   view_event     Boolean  @default(false)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
-  user           User[]
+  User           User[]
 
   @@map("roles")
 }
@@ -90,9 +90,9 @@ model Address {
 
 model UserHasAddress {
   user_id    String  @unique
-  user       User    @relation(fields: [user_id], references: [uid])
   address_id String  @unique
   address    Address @relation(fields: [address_id], references: [id])
+  user       User    @relation(fields: [user_id], references: [uid])
 
   @@id([user_id, address_id])
   @@map("users_has_addresses")

@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import { RoleModel } from "./roles.model";
 
 export class UserModel {
   public readonly uid: string;
@@ -15,6 +16,8 @@ export class UserModel {
   public created_at?: Date;
   public updated_at?: Date;
   public deleted_at?: Date;
+
+  public role?: RoleModel;
 
   constructor(props: Omit<UserModel, "uid">, uid?: string) {
     Object.assign(this, props);

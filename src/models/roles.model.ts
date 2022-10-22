@@ -12,8 +12,8 @@ export class RoleModel {
   public delete_event: boolean;
   public edit_event: boolean;
   public view_event: boolean;
-  public created_at: Date;
-  public updated_at: Date;
+  public created_at?: Date;
+  public updated_at?: Date;
   public user?: UserModel[];
 
   constructor(props: Omit<RoleModel, "id">, id?: string) {
@@ -23,4 +23,10 @@ export class RoleModel {
       this.id = uuid();
     }
   }
+}
+
+export enum RolesNames {
+  "ADMIN" = "ADMIN",
+  "ORGANIZER" = "ORGANIZER",
+  "PARTICIPANT" = "PARTICIPANT",
 }
