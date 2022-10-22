@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7.32
+    command: --innodb_use_native_aio=0 --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    volumes:
+      - organizza-database:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=organizzadev
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  # app: 
+  #   depends_on:
+  #     - db
+  #   build: .
+  #   command: yarn start
+  #   ports:
+  #     - "8000:8000"
+  #   restart: always
+volumes:
+  organizza-database:

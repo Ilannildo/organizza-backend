@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uid                  String          @id @default(uuid())
+  name                 String          @db.VarChar(150)
+  email                String          @unique(map: "email")
+  gender               String?         @db.VarChar(15)
+  phone                String?         @db.VarChar(32)
+  password             String
+  photo_url            String?
+  name_badge           String?         @db.VarChar(150)
+  status               Boolean         @default(false)
+  role_id              String
+  email_verificated_at DateTime?
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  deleted_at           DateTime?
+  role                 Role            @relation(fields: [role_id], references: [id])
+  user_has_address     UserHasAddress?
+
+  @@map("users")
+}
+
+model Role {
+  id             String   @id @default(uuid())
+  name           String   @db.VarChar(150)
+  register_user  Boolean  @default(false)
+  delete_user    Boolean  @default(false)
+  edit_user      Boolean  @default(false)
+  view_user      Boolean  @default(false)
+  register_event Boolean  @default(false)
+  delete_event   Boolean  @default(false)
+  edit_event     Boolean  @default(false)
+  view_event     Boolean  @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  User           User[]
+
+  @@map("roles")
+}
+
+model State {
+  id         String   @id @default(uuid())
+  name       String   @db.VarChar(150)
+  uf         String   @db.VarChar(2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  cities     City[]
+
+  @@map("states")
+}
+
+model City {
+  id                 String    @id @default(uuid())
+  name               String    @db.VarChar(150)
+  zipcode            String    @db.VarChar(8)
+  state_id           String
+  is_available_event Boolean   @default(true)
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  state              State     @relation(fields: [state_id], references: [id])
+  addresses          Address[]
+
+  @@map("cities")
+}
+
+model Address {
+  id               String          @id @default(uuid())
+  street           String          @db.VarChar(150)
+  reference        String?         @db.VarChar(150)
+  neighborhood     String          @db.VarChar(150)
+  city_id          String
+  latitude         String?
+  longitude        String?
+  address_link     String?
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+  city             City            @relation(fields: [city_id], references: [id])
+  user_has_address UserHasAddress?
+
+  @@map("addresses")
+}
+
+model UserHasAddress {
+  user_id    String  @unique
+  address_id String  @unique
+  address    Address @relation(fields: [address_id], references: [id])
+  user       User    @relation(fields: [user_id], references: [uid])
+
+  @@id([user_id, address_id])
+  @@map("users_has_addresses")
+}
