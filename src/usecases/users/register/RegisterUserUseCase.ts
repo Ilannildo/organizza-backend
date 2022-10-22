@@ -14,23 +14,13 @@ export class RegisterUserUseCase {
       throw new Error("Este email já está cadastrado");
     }
 
-    const userAlreadyExistsByPhone =
-      await this.usersRepository.findByPhoneNumber(user.phone);
-    if (userAlreadyExistsByPhone) {
-      throw new Error("Este número de telefone já está sendo usado");
-    }
-
     const passwordHash = await hash(user.password, genSaltSync(10));
 
     const newUser = new UserModel({
       email: user.email,
-      gender: user.gender,
       name: user.name,
-      name_badge: user.name_badge,
       password: passwordHash,
-      phone: user.phone,
-      photo_url: null,
-      role_id: "84ad9164-582b-48f8-99ad-2fec594056b7",
+      role_id: "e114b470-b9cd-47be-8d32-b72a305e0615",
       status: false,
     });
 

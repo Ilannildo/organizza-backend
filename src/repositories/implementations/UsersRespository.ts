@@ -76,7 +76,17 @@ export class UsersRepository implements IUsersRepository {
 
   async save(user: UserModel): Promise<UserModel> {
     const userCreated = await client.user.create({
-      data: user,
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        phone: user.phone,
+        role: {
+          connect: {
+            id: user.role_id,
+          },
+        },
+      },
     });
 
     return userCreated;

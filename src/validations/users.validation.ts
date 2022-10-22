@@ -41,25 +41,6 @@ export const register = [
     code: Codes.DOCUMENT__NOT_FOUND,
     status: HttpStatus.UNPROCESSABLE_ENTITY,
   }),
-  body("gender").not().isEmpty().withMessage({
-    message: "O gênero não foi informado",
-    code: Codes.DOCUMENT__NOT_FOUND,
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-  }),
-  body("phone")
-    .not()
-    .isEmpty()
-    .withMessage({
-      message: "O número de telfone não foi informado",
-      code: Codes.DOCUMENT__NOT_FOUND,
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-    })
-    .isMobilePhone("pt-BR")
-    .withMessage({
-      message: "O número de telefone inválido",
-      code: Codes.DOCUMENT__NOT_FOUND,
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-    }),
   body("email")
     .isEmail()
     .withMessage({

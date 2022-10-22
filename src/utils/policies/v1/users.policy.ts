@@ -108,8 +108,6 @@ export function isAllowed(
   const user = request.user as UserDI;
   const roles = user ? roleToPolicy(user.role) : ["guest"];
   const { user_id } = request.params;
-  console.log("User", user);
-  console.log("Roles", roles);
 
   if (user && user_id && user.matchesId(user_id)) {
     return next();

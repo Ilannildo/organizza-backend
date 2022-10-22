@@ -8,17 +8,14 @@ export class RegisterUserController {
   constructor(private registerUserUseCase: RegisterUserUseCase) {}
 
   async handle(request: Request, response: Response) {
-    const { email, gender, name, name_badge, password, phone } = request.body;
+    const { email, name, password } = request.body;
 
     try {
       const result = await this.registerUserUseCase.execute({
         user: {
           email,
-          gender,
           name,
-          name_badge,
           password,
-          phone,
         },
       });
 

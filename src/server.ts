@@ -10,7 +10,6 @@ app.listen(process.env.PORT || DEFAULT_PORT, () => {
   }:${process.env.PORT}`;
 
   // logging initialization
-  console.log("\n");
   console.log(chalk.bgCyan(process.env.APP_NAME));
   console.log(chalk.cyan(`Environment:     ${process.env.NODE_ENV}`));
   console.log(chalk.cyan(`Server:          ${server}`));

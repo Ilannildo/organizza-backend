@@ -10,6 +10,9 @@
     "build": "tsc",
     "release": "prisma migrate deploy"
   },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "4.4.0",
     "@types/jsonwebtoken": "^8.5.9",
@@ -17,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
+    "date-fns": "^2.29.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
     "glob": "^8.0.3",

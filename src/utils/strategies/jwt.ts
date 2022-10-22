@@ -10,7 +10,7 @@ module.exports = (passport: any) => {
 
   passport.use(
     new JwtStrategy(opts, function (jwt_payload, done) {
-      console.log('Token  id', jwt_payload)
+      console.log('Token id', jwt_payload)
       client.user
         .findFirst({
           where: {

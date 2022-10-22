@@ -8,7 +8,7 @@ export class GenerateAccessTokenProvider {
       },
       process.env.SECRET_KEY,
       {
-        expiresIn: "60s",
+        expiresIn: "1d",
       }
     );
 

@@ -24,14 +24,21 @@ export class AuthUserUseCase {
       throw new Error("Ops! Verifique suas credenciais e tente novamente");
     }
 
+    if (userAlreadyExistsByEmail.email_verificated_at === null) {
+      throw new Error("Você ainda não ativou sua conta. Verifique seu email!");
+      // TO-DO: Verificar se já foi enviado o email de ativação de conta
+      // Verificar se já expirou o link
+      // Enviar novo link para o email cadastrado
+    }
+
     if (userAlreadyExistsByEmail.status === false) {
       throw new Error(
-        "Sua conta está suspensa. Entre em contato com o administrador"
+        "Sua conta está desativada. Entre em contato com o administrador"
       );
     }
 
     const passwordHash = await hash(password, genSaltSync(10));
-    console.log('senha =>', passwordHash);
+    console.log("senha =>", passwordHash);
 
     const passwordMatch = await compare(
       password,

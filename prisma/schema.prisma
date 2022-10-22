@@ -11,8 +11,8 @@ model User {
   uid                  String          @id @default(uuid())
   name                 String          @db.VarChar(150)
   email                String          @unique(map: "email")
-  gender               String          @db.VarChar(15)
-  phone                String          @db.VarChar(32)
+  gender               String?         @db.VarChar(15)
+  phone                String?         @db.VarChar(32)
   password             String
   photo_url            String?
   name_badge           String?         @db.VarChar(150)

@@ -4,8 +4,8 @@ export class UserModel {
   public readonly uid: string;
   public name: string;
   public email: string;
-  public gender: string;
-  public phone: string;
+  public gender?: string;
+  public phone?: string;
   public password: string;
   public photo_url?: string;
   public name_badge?: string;

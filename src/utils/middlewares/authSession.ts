@@ -32,7 +32,6 @@ export function authSessionMiddleware(
     next();
   } catch (error) {
     if (error.message !== "jwt expired") {
-      console.log("Error =>", error.message);
       return sendError(
         res,
         Codes.AUTH__UNEXPECTED_AUTHORIZATION,
