@@ -1,4 +1,4 @@
-import { RoleModel, IRoleName } from "../../models/roles.model";
+import { RoleModel } from "../../models/roles.model";
 import { client } from "../../prisma/client";
 import { IRolesRepository } from "../interfaces/IRolesRepository";
 
