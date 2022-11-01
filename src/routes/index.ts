@@ -29,6 +29,7 @@ routes
     return registerUserController.handle(request, response);
   });
 
+// busca os dados do usuário logado
 routes
   .route("/api/me")
   .all(policies.isAllowed)
@@ -36,6 +37,7 @@ routes
     return meUserController.handle(request, response);
   });
 
+// efetua o upload da capa do evento
 routes
   .route("/api/events/cover")
   .all(policies.isAllowed, multer(multerConfigs).single("cover"))

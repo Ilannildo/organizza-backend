@@ -14,7 +14,7 @@ export const upload_cover = [
       code: Codes.DOCUMENT__NOT_FOUND,
       status: HttpStatus.UNPROCESSABLE_ENTITY,
     }),
-  body("event_id")
+  check("event_id")
     .not()
     .isEmpty()
     .withMessage({

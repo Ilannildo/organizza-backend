@@ -5,4 +5,5 @@ export interface IEventCoverRepository {
   findByEventId(event_id: string): Promise<EventCoverModel>;
   findAll(): Promise<EventCoverModel[]>;
   save(cover: EventCoverModel): Promise<EventCoverModel>;
+  delete(cover_id: string): Promise<boolean>;
 }

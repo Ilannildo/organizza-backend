@@ -39,4 +39,13 @@ export class EventCoverRepository implements IEventCoverRepository {
     });
     return created;
   }
+  async delete(event_id: string): Promise<boolean> {
+    const deleteCover = await client.eventCover.delete({
+      where: {
+        event_id,
+      },
+    });
+
+    return !!deleteCover;
+  }
 }
