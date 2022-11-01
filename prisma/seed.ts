@@ -43,6 +43,34 @@ async function main() {
     data: roles,
     skipDuplicates: false,
   });
+
+  const event_types = [
+    {
+      title: "Jornada ou congresso",
+    },
+    {
+      title: "Festival, Festa ou show",
+    },
+  ];
+
+  await prisma.eventType.createMany({
+    data: event_types,
+    skipDuplicates: false,
+  });
+
+  const main_subjects = [
+    {
+      title: "Acadêmico  e científico",
+    },
+    {
+      title: "Desenvolvimento pessoal",
+    },
+  ];
+
+  await prisma.mainSubject.createMany({
+    data: main_subjects,
+    skipDuplicates: false,
+  });
 }
 
 main()

@@ -1,10 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import passport from "passport";
+import morgan from "morgan";
 
 import { routes } from "./routes/index";
 import { authSessionMiddleware } from "./utils/middlewares/authSession";
 import { handleJWTAuthentication } from "./utils/strategies/authenticate";
+import path from "path";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -12,7 +14,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const app = express();
 app.use(cors());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 /// Add Json middleware
 app.use(express.json());
 
@@ -26,6 +28,13 @@ require("./utils/strategies/jwt")(passport);
 app.use((request: Request, response: Response, next: NextFunction) =>
   handleJWTAuthentication(request, response, next)
 );
+
+app.use(
+  "/files",
+  express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
+);
+
+app.use(morgan("dev"));
 
 // Add routes
 app.use(routes);

@@ -10,8 +10,9 @@ export function authSessionMiddleware(
   next: NextFunction
 ) {
   const autheticationPaths = ["/api/auth/login", "/api/auth/register"];
+  const filesPath = "/files";
 
-  if (autheticationPaths.includes(req.path)) {
+  if (autheticationPaths.includes(req.path) || req.path.includes(filesPath)) {
     return next();
   }
   const authToken = req.headers.authorization;

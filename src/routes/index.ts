@@ -1,11 +1,15 @@
+import multer from "multer";
 import { Request, Response, Router } from "express";
+import { uploadEventCoverController } from "../usecases/events/upload_cover";
+import { registerUserController } from "../usecases/users/register";
 import { authUserController } from "../usecases/users/auth";
 import { meUserController } from "../usecases/users/me";
-import { registerUserController } from "../usecases/users/register";
-import * as policies from "../utils/policies/v1/users.policy";
 import { RequestWithAuth } from "../utils/types";
+import { multerConfigs } from "../config/multer";
 
+import * as policies from "../utils/policies/v1/users.policy";
 import * as usersValidations from "../validations/users.validation";
+import * as eventsValidations from "../validations/events.validation";
 
 export const routes = Router();
 
@@ -31,3 +35,13 @@ routes
   .get((request: RequestWithAuth, response: Response) => {
     return meUserController.handle(request, response);
   });
+
+routes
+  .route("/api/events/cover")
+  .all(policies.isAllowed, multer(multerConfigs).single("cover"))
+  .post(
+    eventsValidations.upload_cover,
+    (request: RequestWithAuth, response: Response) => {
+      return uploadEventCoverController.handle(request, response);
+    }
+  );

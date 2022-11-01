@@ -24,6 +24,7 @@ model User {
   deleted_at           DateTime?
   role                 Role            @relation(fields: [role_id], references: [id])
   user_has_address     UserHasAddress?
+  events               Event[]
 
   @@map("users")
 }
@@ -96,4 +97,98 @@ model UserHasAddress {
 
   @@id([user_id, address_id])
   @@map("users_has_addresses")
+}
+
+model Event {
+  id                   String           @id @default(uuid())
+  title                String
+  slug                 String
+  created_by_user_id   String
+  event_type_id        String
+  credit_hour          Int?
+  main_subject_id      String
+  short_description    String
+  summary              String?
+  venue_type           EventVenueType
+  is_private           Boolean
+  start_date           DateTime
+  start_time           DateTime
+  end_date             DateTime
+  end_time             DateTime
+  logo_url             String?
+  facebook_url         String?
+  instagram_url        String?
+  twitter_url          String?
+  event_responsible_id String
+  status               EventStatus
+  created_at           DateTime         @default(now())
+  updated_at           DateTime         @updatedAt
+  deleted_at           DateTime?
+  created_by_user      User             @relation(fields: [created_by_user_id], references: [uid])
+  event_responsible    EventResponsible @relation(fields: [event_responsible_id], references: [id])
+  main_subject         MainSubject      @relation(fields: [main_subject_id], references: [id])
+  event_type           EventType        @relation(fields: [event_type_id], references: [id])
+  event_cover          EventCover?
+
+  @@map("events")
+}
+
+model EventCover {
+  id       String  @id @default(uuid())
+  event_id String  @unique
+  name     String
+  size     Int
+  key      String
+  url      String?
+  event    Event   @relation(fields: [event_id], references: [id])
+
+  @@map("event_covers")
+}
+
+model EventResponsible {
+  id         String    @id @default(uuid())
+  name       String
+  email      String
+  phone      String?
+  logo_url   String?
+  document   String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  events     Event[]
+
+  @@map("event_responsibles")
+}
+
+model MainSubject {
+  id         String    @id @default(uuid())
+  title      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  events     Event[]
+
+  @@map("main_subjects")
+}
+
+model EventType {
+  id         String    @id @default(uuid())
+  title      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  events     Event[]
+
+  @@map("event_types")
+}
+
+enum EventVenueType {
+  presential
+  online
+}
+
+enum EventStatus {
+  published
+  started
+  pending
 }

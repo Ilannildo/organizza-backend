@@ -11,7 +11,6 @@ module.exports = (passport: any) => {
 
   passport.use(
     new JwtStrategy(opts, function (jwt_payload, done) {
-      console.log('Token id', jwt_payload)
       client.user
         .findFirst({
           where: {
@@ -22,7 +21,6 @@ module.exports = (passport: any) => {
           },
         })
         .then((user: UserModel) => {
-          console.log("Usuário", user);
           if (user) {
             return done(undefined, user);
           } else {
