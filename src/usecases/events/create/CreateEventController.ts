@@ -24,9 +24,9 @@ export class CreateEventController {
         city_id,
         responsible_name,
         responsible_email,
+        responsible_description,
       } = request.body;
       const result = await this.createEventUseCase.execute({
-        response,
         event: {
           title,
           created_by_user_id: request.user.uid,
@@ -43,6 +43,7 @@ export class CreateEventController {
           city_id,
           responsible_name,
           responsible_email,
+          responsible_description,
         },
       });
       return sendSuccessful(response, result);

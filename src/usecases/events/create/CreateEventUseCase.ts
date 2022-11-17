@@ -11,7 +11,7 @@ import { ICreateEventRequestDTO } from "./CreateEventDTO";
 export class CreateEventUseCase {
   constructor(private eventsRepository: IEventsRepository) {}
 
-  async execute({ response, event }: ICreateEventRequestDTO) {
+  async execute({ event }: ICreateEventRequestDTO) {
     const eventAlreadyExistsByTitle = await this.eventsRepository.findByTitle(
       event.title
     );
@@ -25,6 +25,7 @@ export class CreateEventUseCase {
     const newResponsible = new EventResponsibleModel({
       name: event.responsible_name,
       email: event.responsible_email,
+      description: event.responsible_description
     });
 
     const newEvent = new EventModel({

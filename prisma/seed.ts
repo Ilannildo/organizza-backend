@@ -41,35 +41,45 @@ async function main() {
 
   await prisma.role.createMany({
     data: roles,
-    skipDuplicates: false,
+    skipDuplicates: true,
   });
 
   const event_types = [
     {
       title: "Jornada ou congresso",
+      icon_name: "laptop",
     },
     {
       title: "Festival, Festa ou show",
+      icon_name: "music-notes"
     },
   ];
 
   await prisma.eventType.createMany({
     data: event_types,
-    skipDuplicates: false,
+    skipDuplicates: true,
   });
 
   const main_subjects = [
-    {
-      title: "Acadêmico  e científico",
-    },
-    {
-      title: "Desenvolvimento pessoal",
-    },
+    { title: "Acadêmico e científico" },
+    { title: "Desenvolvimento pessoal" },
+    { title: "Design e produtos digitais" },
+    { title: "Esportes" },
+    { title: "Games e Geek" },
+    { title: "Gastronomia" },
+    { title: "Empreendedorismo, negócios e inovasão" },
+    { title: "Governo e política" },
+    { title: "Marketing e vendas" },
+    { title: "Moda e beleza" },
+    { title: "Saúde e bem-estar" },
+    { title: "Religião e espiritualidade" },
+    { title: "Sociedade e cultura" },
+    { title: "Teatro, stand-up e dança" },
   ];
 
   await prisma.mainSubject.createMany({
     data: main_subjects,
-    skipDuplicates: false,
+    skipDuplicates: true,
   });
 }
 

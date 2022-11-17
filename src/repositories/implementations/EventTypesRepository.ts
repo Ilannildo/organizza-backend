@@ -1,10 +1,5 @@
-import { CityModel } from "../../models/city.model";
 import { EventTypeModel } from "../../models/event_type.model";
 import { client } from "../../prisma/client";
-import {
-  ICitiesRepository,
-  ICityRelation,
-} from "../interfaces/ICitiesRepository";
 import { IEventTypesRepository } from "../interfaces/IEventTypesRepository";
 
 export class EventTypesRepository implements IEventTypesRepository {

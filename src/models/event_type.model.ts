@@ -4,6 +4,7 @@ import { EventModel } from "./event.model";
 export class EventTypeModel {
   public readonly id: string;
   public title: string;
+  public icon_name?: string;
   public created_at?: Date;
   public updated_at?: Date;
   public deleted_at?: Date;

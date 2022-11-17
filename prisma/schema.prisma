@@ -158,16 +158,17 @@ model EventCover {
 }
 
 model EventResponsible {
-  id         String    @id @default(uuid())
-  name       String
-  email      String    @unique
-  phone      String?
-  logo_url   String?
-  document   String?
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-  events     Event[]
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  description String?
+  phone       String?
+  logo_url    String?
+  document    String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+  events      Event[]
 
   @@map("event_responsibles")
 }
@@ -186,6 +187,7 @@ model MainSubject {
 model EventType {
   id         String    @id @default(uuid())
   title      String
+  icon_name  String?
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?

@@ -1,7 +1,6 @@
 import { Response } from "express";
 
 export interface ICreateEventRequestDTO {
-  response: Response;
   event: {
     title: string;
     created_by_user_id: string;
@@ -18,5 +17,6 @@ export interface ICreateEventRequestDTO {
     city_id?: string;
     responsible_name: string;
     responsible_email: string;
+    responsible_description?: string;
   };
 }

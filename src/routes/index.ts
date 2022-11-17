@@ -14,6 +14,7 @@ import { createEventController } from "../usecases/events/create";
 import { listAllCitiesController } from "../usecases/cities/list_all";
 import { listAllStatesController } from "../usecases/states/list_all";
 import { listAllEventTypesController } from "../usecases/event_types/list_all";
+import { listAllMainSubjectController } from "../usecases/main_subjects/list_all";
 
 export const routes = Router();
 
@@ -76,4 +77,9 @@ routes.route("/api/states").get((request: Request, response: Response) => {
 // todos os tipos de eventos
 routes.route("/api/event-types").get((request: Request, response: Response) => {
   return listAllEventTypesController.handle(request, response);
+});
+
+// todos os tipos de eventos
+routes.route("/api/main-subjects").get((request: Request, response: Response) => {
+  return listAllMainSubjectController.handle(request, response);
 });

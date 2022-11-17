@@ -6,6 +6,7 @@ export class EventResponsibleModel {
   public name: string;
   public email: string;
   public phone?: string;
+  public description?: string;
   public logo_url?: string;
   public document?: string;
   public created_at?: Date;
