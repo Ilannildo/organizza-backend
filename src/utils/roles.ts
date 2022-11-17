@@ -36,13 +36,3 @@ export function validateCpf(cpf: string) {
   }
   return true;
 }
-
-export enum UserRoles {
-  /**
-   * AUTH codes
-   */
-  // Thrown if there is no user corresponding to the given param (username, userId, email)
-  ADMIN = 0,
-  PROFESSIONAL = 1,
-  CUSTOMER = 2,
-}

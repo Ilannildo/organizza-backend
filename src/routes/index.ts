@@ -10,6 +10,10 @@ import { multerConfigs } from "../config/multer";
 import * as policies from "../utils/policies/v1/users.policy";
 import * as usersValidations from "../validations/users.validation";
 import * as eventsValidations from "../validations/events.validation";
+import { createEventController } from "../usecases/events/create";
+import { listAllCitiesController } from "../usecases/cities/list_all";
+import { listAllStatesController } from "../usecases/states/list_all";
+import { listAllEventTypesController } from "../usecases/event_types/list_all";
 
 export const routes = Router();
 
@@ -37,6 +41,17 @@ routes
     return meUserController.handle(request, response);
   });
 
+// cadastro de eventos
+routes
+  .route("/api/events")
+  .all(policies.isAllowed)
+  .post(
+    // eventsValidations.register,
+    (request: RequestWithAuth, response: Response) => {
+      return createEventController.handle(request, response);
+    }
+  );
+
 // efetua o upload da capa do evento
 routes
   .route("/api/events/cover")
@@ -47,3 +62,18 @@ routes
       return uploadEventCoverController.handle(request, response);
     }
   );
+
+// todas as cidades
+routes.route("/api/cities").get((request: Request, response: Response) => {
+  return listAllCitiesController.handle(request, response);
+});
+
+// todos os estados
+routes.route("/api/states").get((request: Request, response: Response) => {
+  return listAllStatesController.handle(request, response);
+});
+
+// todos os tipos de eventos
+routes.route("/api/event-types").get((request: Request, response: Response) => {
+  return listAllEventTypesController.handle(request, response);
+});

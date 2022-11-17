@@ -73,18 +73,19 @@ model City {
 }
 
 model Address {
-  id               String          @id @default(uuid())
-  street           String          @db.VarChar(150)
-  reference        String?         @db.VarChar(150)
-  neighborhood     String          @db.VarChar(150)
-  city_id          String
-  latitude         String?
-  longitude        String?
-  address_link     String?
-  created_at       DateTime        @default(now())
-  updated_at       DateTime        @updatedAt
-  city             City            @relation(fields: [city_id], references: [id])
-  user_has_address UserHasAddress?
+  id                String           @id @default(uuid())
+  street            String           @db.VarChar(150)
+  reference         String?          @db.VarChar(150)
+  neighborhood      String?          @db.VarChar(150)
+  city_id           String
+  latitude          String?
+  longitude         String?
+  address_link      String?
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  city              City             @relation(fields: [city_id], references: [id])
+  user_has_address  UserHasAddress?
+  event_has_address EventHasAddress?
 
   @@map("addresses")
 }
@@ -129,8 +130,19 @@ model Event {
   main_subject         MainSubject      @relation(fields: [main_subject_id], references: [id])
   event_type           EventType        @relation(fields: [event_type_id], references: [id])
   event_cover          EventCover?
+  event_has_address    EventHasAddress?
 
   @@map("events")
+}
+
+model EventHasAddress {
+  event_id   String  @unique
+  address_id String  @unique
+  address    Address @relation(fields: [address_id], references: [id])
+  event      Event   @relation(fields: [event_id], references: [id])
+
+  @@id([event_id, address_id])
+  @@map("events_has_addresses")
 }
 
 model EventCover {
@@ -148,7 +160,7 @@ model EventCover {
 model EventResponsible {
   id         String    @id @default(uuid())
   name       String
-  email      String
+  email      String    @unique
   phone      String?
   logo_url   String?
   document   String?
