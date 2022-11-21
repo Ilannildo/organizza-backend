@@ -48,7 +48,7 @@ routes
   .route("/api/events")
   .all(policies.isAllowed)
   .post(
-    // eventsValidations.register,
+    eventsValidations.register,
     (request: RequestWithAuth, response: Response) => {
       return createEventController.handle(request, response);
     }
