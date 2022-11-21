@@ -46,7 +46,7 @@ export class CreateEventController {
           responsible_description,
         },
       });
-      return sendSuccessful(response, result);
+      return sendSuccessful(response, result, 201);
     } catch (error) {
       if (error.message === Codes.CONFLICTING_CONDITION) {
         return sendError(

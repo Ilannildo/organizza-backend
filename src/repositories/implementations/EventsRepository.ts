@@ -62,4 +62,13 @@ export class EventRepository implements IEventsRepository {
     });
     return created;
   }
+
+  async findBySlug(slug: string): Promise<EventModel> {
+    const event = await client.event.findFirst({
+      where: {
+        slug,
+      },
+    });
+    return event;
+  }
 }

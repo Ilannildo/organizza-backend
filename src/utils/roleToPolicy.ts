@@ -10,7 +10,6 @@ export enum POLICY_ROLES {
   DELETE_EVENT = "delete_event",
   EDIT_EVENT = "edit_event",
   VIEW_EVENT = "view_event",
- 
 }
 
 export function roleToPolicy(role?: RoleModel) {

@@ -15,6 +15,7 @@ import { listAllCitiesController } from "../usecases/cities/list_all";
 import { listAllStatesController } from "../usecases/states/list_all";
 import { listAllEventTypesController } from "../usecases/event_types/list_all";
 import { listAllMainSubjectController } from "../usecases/main_subjects/list_all";
+import { findEventController } from "../usecases/events/find";
 
 export const routes = Router();
 
@@ -79,7 +80,18 @@ routes.route("/api/event-types").get((request: Request, response: Response) => {
   return listAllEventTypesController.handle(request, response);
 });
 
-// todos os tipos de eventos
-routes.route("/api/main-subjects").get((request: Request, response: Response) => {
-  return listAllMainSubjectController.handle(request, response);
-});
+// todos os assuntos principais
+routes
+  .route("/api/main-subjects")
+  .get((request: Request, response: Response) => {
+    return listAllMainSubjectController.handle(request, response);
+  });
+
+// PUBLIC ROUTES --------------------------------
+
+// buscar evento pelo slug
+routes
+  .route("/api/events/slug")
+  .get((request: RequestWithAuth, response: Response) => {
+    return findEventController.handle(request, response);
+  });
