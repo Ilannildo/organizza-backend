@@ -7,6 +7,7 @@ import { routes } from "./routes/index";
 import { authSessionMiddleware } from "./utils/middlewares/authSession";
 import { handleJWTAuthentication } from "./utils/strategies/authenticate";
 import path from "path";
+import { createWriteStream } from "fs";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -34,7 +35,16 @@ app.use(
   express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
 );
 
-app.use(morgan("dev"));
+// create a write stream (in append mode)
+const accessLogStream = createWriteStream(path.join(__dirname, "..", "logs", "access.log"), {
+  flags: "a",
+});
+
+app.use(morgan('dev', {
+  skip: function (req, res) { return res.statusCode < 400 }
+}))
+
+app.use(morgan("common", { stream: accessLogStream }));
 
 // Add routes
 app.use(routes);

@@ -14,6 +14,13 @@ export class MeUserUseCase {
       );
     }
 
+    if (!userAlreadyExistsById.email_token) {
+      throw new Error("Você ainda não ativou sua conta. Verifique seu email!");
+      // TO-DO: Verificar se já foi enviado o email de ativação de conta
+      // Verificar se já expirou o link
+      // Enviar novo link para o email cadastrado
+    }
+
     if (userAlreadyExistsById.status === false) {
       throw new Error(
         "Sua conta está suspensa. Entre em contato com o administrador"

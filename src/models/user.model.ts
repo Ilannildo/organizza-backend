@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import { EmailTokenModel } from "./email_token.model";
 import { RoleModel } from "./roles.model";
 
 export class UserModel {
@@ -12,12 +13,12 @@ export class UserModel {
   public name_badge?: string;
   public status: boolean;
   public role_id: string;
-  public email_verificated_at?: Date;
   public created_at?: Date;
   public updated_at?: Date;
   public deleted_at?: Date;
 
   public role?: RoleModel;
+  public email_token?: EmailTokenModel;
 
   constructor(props: Omit<UserModel, "uid">, uid?: string) {
     Object.assign(this, props);

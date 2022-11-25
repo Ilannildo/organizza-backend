@@ -5,11 +5,15 @@ import {
 import { compare, genSaltSync, hash } from "bcryptjs";
 import { GenerateAccessTokenProvider } from "../../../providers/GenerateAccessTokenProvider";
 import { IUsersRepository } from "../../../repositories/interfaces/IUsersrepository";
+import { EmailTokenProvider } from "../../../providers/EmailTokenProvider";
+import { EmailTokenModel } from "../../../models/email_token.model";
+import { EmailTokenConfigs } from "../../../config/email_token";
 
 export class AuthUserUseCase {
   constructor(
     private generateAccessTokenProvider: GenerateAccessTokenProvider,
-    private usersRepository: IUsersRepository
+    private usersRepository: IUsersRepository,
+    private emailTokenProvider: EmailTokenProvider
   ) {}
 
   async execute({
@@ -24,7 +28,15 @@ export class AuthUserUseCase {
       throw new Error("Ops! Verifique suas credenciais e tente novamente");
     }
 
-    if (userAlreadyExistsByEmail.email_verificated_at === null) {
+    if (!userAlreadyExistsByEmail.email_token) {
+      const newEmailToken = new EmailTokenModel({
+        expires_in: EmailTokenConfigs.expires_in,
+        user_id: userAlreadyExistsByEmail.uid,
+        email_sent: false,
+      });
+
+      const emailToken = await this.emailTokenProvider.execute(newEmailToken);
+
       throw new Error("Você ainda não ativou sua conta. Verifique seu email!");
       // TO-DO: Verificar se já foi enviado o email de ativação de conta
       // Verificar se já expirou o link

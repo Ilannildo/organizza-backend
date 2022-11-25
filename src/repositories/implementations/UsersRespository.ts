@@ -16,6 +16,7 @@ export class UsersRepository implements IUsersRepository {
             address: true,
           },
         },
+        email_token: true,
       },
     });
 
