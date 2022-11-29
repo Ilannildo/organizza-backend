@@ -6,4 +6,5 @@ export interface IUsersRepository {
   findByPhoneNumber(phone: string): Promise<UserModel>;
   findAll(): Promise<UserModel[]>;
   save(user: UserModel): Promise<UserModel>;
+  confirmEmail(user_id: string): Promise<UserModel>;
 }

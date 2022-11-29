@@ -12,6 +12,7 @@ export class UserModel {
   public photo_url?: string;
   public name_badge?: string;
   public status: boolean;
+  public email_verificated_at?: Date;
   public role_id: string;
   public created_at?: Date;
   public updated_at?: Date;

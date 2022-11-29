@@ -15,7 +15,9 @@ import { listAllCitiesController } from "../usecases/cities/list_all";
 import { listAllStatesController } from "../usecases/states/list_all";
 import { listAllEventTypesController } from "../usecases/event_types/list_all";
 import { listAllMainSubjectController } from "../usecases/main_subjects/list_all";
-import { findEventController } from "../usecases/events/find";
+import { findEventController } from "../usecases/events/find_by_slug";
+import { findEventByIdController } from "../usecases/events/find_by_id";
+import { confirmEmailUserController } from "../usecases/users/confirm_email";
 
 export const routes = Router();
 
@@ -51,6 +53,17 @@ routes
     eventsValidations.register,
     (request: RequestWithAuth, response: Response) => {
       return createEventController.handle(request, response);
+    }
+  );
+
+// cadastro de eventos
+routes
+  .route("/api/events/:event_id")
+  .all(policies.isAllowed)
+  .get(
+    eventsValidations.findById,
+    (request: RequestWithAuth, response: Response) => {
+      return findEventByIdController.handle(request, response);
     }
   );
 
@@ -94,4 +107,11 @@ routes
   .route("/api/events/slug")
   .get((request: RequestWithAuth, response: Response) => {
     return findEventController.handle(request, response);
+  });
+
+  // confirmar conta
+routes
+  .route("/api/auth/confirm-email")
+  .post((request: RequestWithAuth, response: Response) => {
+    return confirmEmailUserController.handle(request, response);
   });

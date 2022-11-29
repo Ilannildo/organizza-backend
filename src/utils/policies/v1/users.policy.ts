@@ -98,6 +98,15 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.EDIT_EVENT, POLICY_ROLES.REGISTER_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id",
+          permissions: ["get"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.VIEW_EVENT],
       allows: [
         {

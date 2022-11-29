@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { EventCoverModel } from "./event_cover.model";
+import { EventHasAddressModel } from "./event_has_address.model";
 import { EventResponsibleModel } from "./event_responsible.model";
 import { EventTypeModel } from "./event_type.model";
 import { MainSubjectModel } from "./main_subject.model";
@@ -26,7 +27,7 @@ export class EventModel {
   public instagram_url?: string;
   public twitter_url?: string;
   public event_responsible_id: string;
-  public status: "published" | "started" | "pending";
+  public status: "published" | "started" | "finished";
   public created_at?: Date;
   public updated_at?: Date;
   public deleted_at?: Date;
@@ -35,6 +36,7 @@ export class EventModel {
   public main_subject?: MainSubjectModel;
   public event_type?: EventTypeModel;
   public event_cover?: EventCoverModel;
+  public event_has_address?: EventHasAddressModel;
 
   constructor(props: Omit<EventModel, "id">, id?: string) {
     Object.assign(this, props);

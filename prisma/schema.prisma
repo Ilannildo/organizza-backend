@@ -8,23 +8,24 @@ datasource db {
 }
 
 model User {
-  uid              String          @id @default(uuid())
-  name             String          @db.VarChar(150)
-  email            String          @unique(map: "email")
-  gender           String?         @db.VarChar(15)
-  phone            String?         @db.VarChar(32)
-  password         String
-  photo_url        String?
-  name_badge       String?         @db.VarChar(150)
-  status           Boolean         @default(false)
-  role_id          String
-  created_at       DateTime        @default(now())
-  updated_at       DateTime        @updatedAt
-  deleted_at       DateTime?
-  role             Role            @relation(fields: [role_id], references: [id])
-  user_has_address UserHasAddress?
-  events           Event[]
-  email_token      EmailToken?
+  uid                  String          @id @default(uuid())
+  name                 String          @db.VarChar(150)
+  email                String          @unique(map: "email")
+  gender               String?         @db.VarChar(15)
+  phone                String?         @db.VarChar(32)
+  password             String
+  photo_url            String?
+  name_badge           String?         @db.VarChar(150)
+  status               Boolean         @default(false)
+  email_verificated_at DateTime?
+  role_id              String
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  deleted_at           DateTime?
+  role                 Role            @relation(fields: [role_id], references: [id])
+  user_has_address     UserHasAddress?
+  events               Event[]
+  email_token          EmailToken?
 
   @@map("users")
 }
@@ -217,5 +218,5 @@ enum EventVenueType {
 enum EventStatus {
   published
   started
-  pending
+  finished
 }

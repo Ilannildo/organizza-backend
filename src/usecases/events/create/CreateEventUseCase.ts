@@ -3,9 +3,7 @@ import { EventModel } from "../../../models/event.model";
 import { EventResponsibleModel } from "../../../models/event_responsible.model";
 import { IEventsRepository } from "../../../repositories/interfaces/IEventsRepository";
 import { Codes } from "../../../utils/codes";
-import { sendError } from "../../../utils/formatters/responses";
 import { convertToSlug } from "../../../utils/formatters/slug";
-import { HttpStatus } from "../../../utils/httpStatus";
 import { ICreateEventRequestDTO } from "./CreateEventDTO";
 
 export class CreateEventUseCase {

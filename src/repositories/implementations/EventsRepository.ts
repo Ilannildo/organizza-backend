@@ -4,8 +4,23 @@ import { client } from "../../prisma/client";
 import { IEventsRepository } from "../interfaces/IEventsRepository";
 
 export class EventRepository implements IEventsRepository {
-  findById(eventId: string): Promise<EventModel> {
-    throw new Error("Method not implemented.");
+  async findById(eventId: string): Promise<EventModel> {
+    const event = await client.event.findFirst({
+      where: {
+        id: eventId,
+      },
+      include: {
+        event_has_address: {
+          include: {
+            address: true,
+          },
+        },
+        event_type: true,
+        main_subject: true,
+      },
+    });
+
+    return event;
   }
   async findByTitle(title: string): Promise<EventModel> {
     const event = await client.event.findFirst({

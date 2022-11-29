@@ -3,8 +3,17 @@ import { client } from "../../prisma/client";
 import { IEmailTokenRepository } from "../interfaces/IEmailTokenRepository";
 
 export class EmailTokenRepository implements IEmailTokenRepository {
-  findById(email_token_id: string): Promise<EmailTokenModel> {
-    throw new Error("Method not implemented.");
+  async findById(email_token_id: string): Promise<EmailTokenModel> {
+    const email_token = await client.emailToken.findFirst({
+      where: {
+        id: email_token_id,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return email_token;
   }
   async findByUserId(user_id: string): Promise<EmailTokenModel> {
     const email_token = await client.emailToken.findFirst({

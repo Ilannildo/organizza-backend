@@ -1,6 +1,9 @@
 import { genSaltSync, hash } from "bcryptjs";
+import { EmailTokenConfigs } from "../../../config/email_token";
+import { EmailTokenModel } from "../../../models/email_token.model";
 import { RoleModel, RolesNames } from "../../../models/roles.model";
 import { UserModel } from "../../../models/user.model";
+import { EmailTokenProvider } from "../../../providers/EmailTokenProvider";
 import { IRolesRepository } from "../../../repositories/interfaces/IRolesRepository";
 import { IUsersRepository } from "../../../repositories/interfaces/IUsersrepository";
 import { RegisterUserDTO } from "./RegisterUserDTO";
@@ -8,7 +11,8 @@ import { RegisterUserDTO } from "./RegisterUserDTO";
 export class RegisterUserUseCase {
   constructor(
     private usersRepository: IUsersRepository,
-    private rolesRepository: IRolesRepository
+    private rolesRepository: IRolesRepository,
+    private emailTokenProvider: EmailTokenProvider
   ) {}
 
   async execute({ user }: RegisterUserDTO): Promise<UserModel> {
@@ -46,6 +50,13 @@ export class RegisterUserUseCase {
     });
 
     const userCreated = await this.usersRepository.save(newUser);
+    const newEmailToken = new EmailTokenModel({
+      expires_in: EmailTokenConfigs.expires_in,
+      user_id: userCreated.uid,
+      email_sent: false,
+    });
+
+    const emailToken = await this.emailTokenProvider.execute(newEmailToken);
     delete userCreated.password;
     return userCreated;
   }

@@ -28,7 +28,7 @@ export class AuthUserUseCase {
       throw new Error("Ops! Verifique suas credenciais e tente novamente");
     }
 
-    if (!userAlreadyExistsByEmail.email_token) {
+    if (!userAlreadyExistsByEmail.email_verificated_at) {
       const newEmailToken = new EmailTokenModel({
         expires_in: EmailTokenConfigs.expires_in,
         user_id: userAlreadyExistsByEmail.uid,
@@ -50,7 +50,6 @@ export class AuthUserUseCase {
     }
 
     const passwordHash = await hash(password, genSaltSync(10));
-    console.log("senha =>", passwordHash);
 
     const passwordMatch = await compare(
       password,

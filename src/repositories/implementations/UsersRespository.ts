@@ -16,7 +16,6 @@ export class UsersRepository implements IUsersRepository {
             address: true,
           },
         },
-        email_token: true,
       },
     });
 
@@ -91,5 +90,19 @@ export class UsersRepository implements IUsersRepository {
     });
 
     return userCreated;
+  }
+
+  async confirmEmail(user_id: string): Promise<UserModel> {
+    const user = await client.user.update({
+      where: {
+        uid: user_id,
+      },
+      data: {
+        status: true,
+        email_verificated_at: new Date(),
+      },
+    });
+
+    return user;
   }
 }

@@ -36,15 +36,23 @@ app.use(
 );
 
 // create a write stream (in append mode)
-const accessLogStream = createWriteStream(path.join(__dirname, "..", "logs", "access.log"), {
-  flags: "a",
-});
+const accessLogStream = createWriteStream(
+  path.join(__dirname, "..", "logs", "access.log"),
+  {
+    flags: "a",
+  }
+);
 
-app.use(morgan('dev', {
-  skip: function (req, res) { return res.statusCode < 400 }
-}))
+app.use(morgan("dev"));
 
-app.use(morgan("common", { stream: accessLogStream }));
+app.use(
+  morgan("common", {
+    stream: accessLogStream,
+    skip: function (req, res) {
+      return res.statusCode < 400;
+    },
+  })
+);
 
 // Add routes
 app.use(routes);

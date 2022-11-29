@@ -1,4 +1,4 @@
-import { body, check } from "express-validator";
+import { body, check, param } from "express-validator";
 import { Codes } from "../utils/codes";
 import { HttpStatus } from "../utils/httpStatus";
 import validationMiddleware from "../utils/middlewares/validations";
@@ -129,4 +129,21 @@ export const register = [
       status: HttpStatus.UNPROCESSABLE_ENTITY,
     }),
   validationMiddleware,
+];
+
+export const findById = [
+  param("event_id")
+    .not()
+    .isEmpty()
+    .withMessage({
+      message: "O id do evento é obrigatório",
+      code: Codes.DOCUMENT__NOT_FOUND,
+      status: HttpStatus.UNPROCESSABLE_ENTITY,
+    })
+    .isUUID()
+    .withMessage({
+      status: HttpStatus.UNPROCESSABLE_ENTITY,
+      code: Codes.REQUEST__INVALID_NAME,
+      message: "Esse id do evento não é válido",
+    }),
 ];
