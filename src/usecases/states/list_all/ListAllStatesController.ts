@@ -1,17 +1,29 @@
 import { Request, Response } from "express";
-import { Codes } from "../../../utils/codes";
+import { IStatesRepository } from "../../../repositories/interfaces/IStatesRepository";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { ListAllStatesUseCase } from "./ListAllStatesUseCase";
+import { Codes } from "../../../utils/codes";
 
 export class ListAllStatesController {
-  constructor(private listAllStatesUseCase: ListAllStatesUseCase) {}
+  constructor(private statesRepository: IStatesRepository) {}
 
   async handle(request: Request, response: Response) {
     try {
-      const result = await this.listAllStatesUseCase.execute();
+      const states = await this.statesRepository.findAll({
+        relations: {
+          cities: false,
+        },
+      });
 
-      return sendSuccessful(response, result);
+      if (!states) {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Nenhum estado encontrado. Entre em contato com o suporte",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+      return sendSuccessful(response, states);
     } catch (error) {
       return sendError(
         response,

@@ -132,7 +132,7 @@ export const register = [
 ];
 
 export const findById = [
-  param("event_id")
+  body("event_id")
     .not()
     .isEmpty()
     .withMessage({

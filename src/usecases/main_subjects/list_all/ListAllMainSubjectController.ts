@@ -1,17 +1,26 @@
 import { Request, Response } from "express";
+import { IMainSubjectRepository } from "../../../repositories/interfaces/IMainSubjectRepository";
 import { Codes } from "../../../utils/codes";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { ListAllMainSubjectsUseCase } from "./ListAllMainSubjectsUseCase";
 
 export class ListAllMainSubjectController {
-  constructor(private listAllMainSubjectsUseCase: ListAllMainSubjectsUseCase) {}
+  constructor(private mainSubjectRepository: IMainSubjectRepository) {}
 
   async handle(request: Request, response: Response) {
     try {
-      const result = await this.listAllMainSubjectsUseCase.execute();
+      const subjects = await this.mainSubjectRepository.findAll();
 
-      return sendSuccessful(response, result);
+    if (!subjects) {
+      return sendError(
+        response,
+        Codes.ENTITY__NOT_FOUND,
+        "Nenhuma assunto principal encontrado. Entre em contato com o suporte",
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    }
+
+      return sendSuccessful(response, subjects);
     } catch (error) {
       return sendError(
         response,

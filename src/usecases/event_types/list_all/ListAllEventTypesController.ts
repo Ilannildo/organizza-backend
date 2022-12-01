@@ -1,17 +1,26 @@
 import { Request, Response } from "express";
-import { Codes } from "../../../utils/codes";
+import { IEventTypesRepository } from "../../../repositories/interfaces/IEventTypesRepository";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { ListAllEventTypesUseCase } from "./ListAllEventTypesUseCase";
+import { Codes } from "../../../utils/codes";
 
 export class ListAllEventTypesController {
-  constructor(private listAllEventTypesUseCase: ListAllEventTypesUseCase) {}
+  constructor(private eventTypesRepository: IEventTypesRepository) {}
 
   async handle(request: Request, response: Response) {
     try {
-      const result = await this.listAllEventTypesUseCase.execute();
+      const types = await this.eventTypesRepository.findAll();
 
-      return sendSuccessful(response, result);
+      if (!types) {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Nenhuma tipo de evento encontrado. Entre em contato com o suporte",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
+      return sendSuccessful(response, types);
     } catch (error) {
       return sendError(
         response,

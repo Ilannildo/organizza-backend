@@ -1,21 +1,23 @@
 import { Request, Response } from "express";
+import { IEventsRepository } from "../../../repositories/interfaces/IEventsRepository";
 import { Codes } from "../../../utils/codes";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { FindEventByIdUseCase } from "./FindEventByIdUseCase";
 
 export class FindEventByIdController {
-  constructor(private findEventByIdUseCase: FindEventByIdUseCase) {}
+  constructor(private eventsRepository: IEventsRepository) {}
 
   async handle(request: Request, response: Response) {
-    const { event_id } = request.params;
-
     try {
-      const result = await this.findEventByIdUseCase.execute({
-        event_id,
-      });
+      const { event_id } = request.query;
+      const event_id_string = event_id.toString();
+      const event = await this.eventsRepository.findById(event_id_string);
 
-      return sendSuccessful(response, result);
+      if (!event) {
+        throw new Error("Evento não encontrado");
+      }
+
+      return sendSuccessful(response, event);
     } catch (error) {
       return sendError(
         response,

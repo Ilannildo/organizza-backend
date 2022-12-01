@@ -1,17 +1,33 @@
 import { Request, Response } from "express";
-import { Codes } from "../../../utils/codes";
+import { ICitiesRepository } from "../../../repositories/interfaces/ICitiesRepository";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { ListAllCitiesUseCase } from "./ListAllCitiesUseCase";
+import { Codes } from "../../../utils/codes";
 
 export class ListAllCitiesController {
-  constructor(private listAllCitiesUseCase: ListAllCitiesUseCase) {}
+  constructor(private citiesRepository: ICitiesRepository) {}
 
   async handle(request: Request, response: Response) {
     try {
-      const result = await this.listAllCitiesUseCase.execute();
+      const cities = await this.citiesRepository.findAll({
+        relations: {
+          state: true,
+        },
+        where: {
+          is_available_event: true,
+        },
+      });
 
-      return sendSuccessful(response, result);
+      if (!cities) {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Nenhuma cidade encontrada. Entre em contato com o suporte",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
+      return sendSuccessful(response, cities);
     } catch (error) {
       return sendError(
         response,

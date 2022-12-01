@@ -10,6 +10,7 @@ import { multerConfigs } from "../config/multer";
 import * as policies from "../utils/policies/v1/users.policy";
 import * as usersValidations from "../validations/users.validation";
 import * as eventsValidations from "../validations/events.validation";
+import * as authValidations from "../validations/auth.validation";
 import { createEventController } from "../usecases/events/create";
 import { listAllCitiesController } from "../usecases/cities/list_all";
 import { listAllStatesController } from "../usecases/states/list_all";
@@ -58,7 +59,7 @@ routes
 
 // cadastro de eventos
 routes
-  .route("/api/events/:event_id")
+  .route("/api/events")
   .all(policies.isAllowed)
   .get(
     eventsValidations.findById,
@@ -109,9 +110,12 @@ routes
     return findEventController.handle(request, response);
   });
 
-  // confirmar conta
+// confirmar conta
 routes
   .route("/api/auth/confirm-email")
-  .post((request: RequestWithAuth, response: Response) => {
-    return confirmEmailUserController.handle(request, response);
-  });
+  .post(
+    authValidations.confirmEmail,
+    (request: RequestWithAuth, response: Response) => {
+      return confirmEmailUserController.handle(request, response);
+    }
+  );
