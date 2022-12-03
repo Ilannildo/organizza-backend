@@ -18,13 +18,5 @@ services:
     restart: always
     ports:
       - 8080:8080
-  # app: 
-  #   depends_on:
-  #     - db
-  #   build: .
-  #   command: yarn start
-  #   ports:
-  #     - "8000:8000"
-  #   restart: always
 volumes:
   organizza-database:

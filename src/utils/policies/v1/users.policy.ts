@@ -131,17 +131,11 @@ export function isAllowed(
     return next();
   }
 
-  console.log('User roles =>', roles);
-  console.log('Path =>', request.route.path);
-  console.log('method =>', request.method.toLowerCase());
-
   acl.areAnyRolesAllowed(
     roles,
     request.route.path,
     request.method.toLowerCase(),
     (err, isAllowed) => {
-      console.log('err', err);
-      console.log('allowed', isAllowed);
       if (err) {
         return responses.sendError(
           response,
