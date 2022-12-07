@@ -19,6 +19,7 @@ import { listAllMainSubjectController } from "../usecases/main_subjects/list_all
 import { findEventController } from "../usecases/events/find_by_slug";
 import { findEventByIdController } from "../usecases/events/find_by_id";
 import { confirmEmailUserController } from "../usecases/users/confirm_email";
+import { findEventByUserIdController } from "../usecases/events/find_by_user_id";
 
 export const routes = Router();
 
@@ -57,7 +58,7 @@ routes
     }
   );
 
-// cadastro de eventos
+// buscar evento pelo id
 routes
   .route("/api/events")
   .all(policies.isAllowed)
@@ -67,6 +68,14 @@ routes
       return findEventByIdController.handle(request, response);
     }
   );
+
+// buscar evento pelo id do usuário
+routes
+  .route("/api/users/events")
+  .all(policies.isAllowed)
+  .get((request: RequestWithAuth, response: Response) => {
+    return findEventByUserIdController.handle(request, response);
+  });
 
 // efetua o upload da capa do evento
 routes

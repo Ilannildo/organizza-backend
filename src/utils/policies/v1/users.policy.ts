@@ -80,6 +80,15 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.REGISTER_EVENT],
+      allows: [
+        {
+          resources: "/api/users/events",
+          permissions: ["get"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.DELETE_EVENT],
       allows: [
         {

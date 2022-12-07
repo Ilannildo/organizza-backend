@@ -145,6 +145,7 @@ model Event {
   event_type           EventType        @relation(fields: [event_type_id], references: [id])
   event_cover          EventCover?
   event_has_address    EventHasAddress?
+  sessions             Session[]
 
   @@map("events")
 }
@@ -169,6 +170,18 @@ model EventCover {
   event    Event   @relation(fields: [event_id], references: [id])
 
   @@map("event_covers")
+}
+
+model SessionCover {
+  id         String  @id @default(uuid())
+  session_id String  @unique
+  name       String
+  size       Int
+  key        String
+  url        String?
+  session    Session @relation(fields: [session_id], references: [id])
+
+  @@map("session_covers")
 }
 
 model EventResponsible {
@@ -208,6 +221,42 @@ model EventType {
   events     Event[]
 
   @@map("event_types")
+}
+
+model Session {
+  id               String        @id @default(uuid())
+  title            String
+  credit_hour      Int?
+  summary          String?
+  responsible_name String
+  event_id         String
+  session_type_id  String
+  place            String
+  start_date       DateTime
+  start_time       DateTime
+  end_date         DateTime
+  end_time         DateTime
+  status           EventStatus
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  deleted_at       DateTime?
+  event            Event         @relation(fields: [event_id], references: [id])
+  session_cover    SessionCover?
+  session_type     SessionType   @relation(fields: [session_type_id], references: [id])
+
+  @@map("sessions")
+}
+
+model SessionType {
+  id         String    @id @default(uuid())
+  title      String
+  icon_name  String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  sessions   Session[]
+
+  @@map("session_types")
 }
 
 enum EventVenueType {

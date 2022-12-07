@@ -18,6 +18,18 @@ export class FindEventController {
         throw new Error("Não encontramos o evento");
       }
 
+      const nowDate = new Date();
+      console.log("Data atual >>>", nowDate);
+      console.log("Data término evento >>>", event.end_date);
+      if (event.end_date <= nowDate) {
+        // evento encerrou
+        const eventComplete = await this.eventsRepository.update({
+          ...event,
+          status: "finished",
+        });
+        return sendSuccessful(response, eventComplete);
+      }
+
       return sendSuccessful(response, event);
     } catch (error) {
       return sendError(

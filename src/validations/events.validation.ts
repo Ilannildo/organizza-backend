@@ -1,4 +1,4 @@
-import { body, check, param } from "express-validator";
+import { body, check, param, query } from "express-validator";
 import { Codes } from "../utils/codes";
 import { HttpStatus } from "../utils/httpStatus";
 import validationMiddleware from "../utils/middlewares/validations";
@@ -132,7 +132,7 @@ export const register = [
 ];
 
 export const findById = [
-  body("event_id")
+  query("event_id")
     .not()
     .isEmpty()
     .withMessage({
@@ -146,4 +146,5 @@ export const findById = [
       code: Codes.REQUEST__INVALID_NAME,
       message: "Esse id do evento não é válido",
     }),
+  validationMiddleware,
 ];
