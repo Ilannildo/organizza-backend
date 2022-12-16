@@ -93,6 +93,9 @@ export class EventRepository implements IEventsRepository {
       where: {
         created_by_user_id: user_id,
       },
+      include: {
+        event_cover: true
+      }
     });
 
     return events;

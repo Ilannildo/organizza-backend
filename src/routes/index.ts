@@ -20,6 +20,8 @@ import { findEventController } from "../usecases/events/find_by_slug";
 import { findEventByIdController } from "../usecases/events/find_by_id";
 import { confirmEmailUserController } from "../usecases/users/confirm_email";
 import { findEventByUserIdController } from "../usecases/events/find_by_user_id";
+import { sendSuccessful } from "../utils/formatters/responses";
+import { createEventTicketController } from "../usecases/tickets/create";
 
 export const routes = Router();
 
@@ -85,6 +87,16 @@ routes
     eventsValidations.upload_cover,
     (request: RequestWithAuth, response: Response) => {
       return uploadEventCoverController.handle(request, response);
+    }
+  );
+
+// efetua a criação de ingresso para o evento
+routes
+  .route("/api/events/:event_id/tickets")
+  .all(policies.isAllowed)
+  .post(
+    (request: Request, response: Response) => {
+      return createEventTicketController.handle(request, response);
     }
   );
 

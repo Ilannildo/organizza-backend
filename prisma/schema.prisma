@@ -146,6 +146,7 @@ model Event {
   event_cover          EventCover?
   event_has_address    EventHasAddress?
   sessions             Session[]
+  tickets              Ticket[]
 
   @@map("events")
 }
@@ -257,6 +258,54 @@ model SessionType {
   sessions   Session[]
 
   @@map("session_types")
+}
+
+model Ticket {
+  id                   String          @id @default(uuid())
+  category_title       String
+  include_fee          Boolean
+  event_id             String
+  ticket_price_type_id String
+  participant_limit    Int
+  description          String?
+  value                Float
+  sold                 Int?
+  start_date           DateTime
+  start_time           DateTime
+  due_date             DateTime
+  due_time             DateTime
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  event                Event           @relation(fields: [event_id], references: [id])
+  ticket_price_type    TicketPriceType @relation(fields: [ticket_price_type_id], references: [id])
+
+  @@map("tickets")
+}
+
+model TicketPriceType {
+  id                   String   @id @default(uuid())
+  title                String
+  quote_id             String
+  is_free              Boolean
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+  quote                Quote    @relation(fields: [quote_id], references: [id])
+  tickets              Ticket[]
+
+  @@map("ticket_price_types")
+}
+
+model Quote {
+  id                 String            @id @default(uuid())
+  name               String
+  percentage         Float
+  min_value          Float
+  min_base_value     Float
+  created_at         DateTime          @default(now())
+  updated_at         DateTime          @updatedAt
+  ticket_price_types TicketPriceType[]
+
+  @@map("quotes")
 }
 
 enum EventVenueType {

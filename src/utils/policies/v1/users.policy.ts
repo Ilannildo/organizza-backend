@@ -89,6 +89,15 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.REGISTER_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id/tickets",
+          permissions: ["post"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.DELETE_EVENT],
       allows: [
         {
