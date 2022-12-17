@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { EmailTokenModel } from "./email_token.model";
+import { EmailTokenModel } from "./email-token.model";
 import { RoleModel } from "./roles.model";
 
 export class UserModel {

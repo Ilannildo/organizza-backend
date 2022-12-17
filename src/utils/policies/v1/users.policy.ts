@@ -20,7 +20,7 @@ export function invokeRolesPolicies() {
       roles: [POLICY_ROLES.ANY],
       allows: [
         {
-          resources: "/api/me",
+          resources: "/api/users/account",
           permissions: ["get"],
         },
       ],
@@ -148,10 +148,13 @@ export function isAllowed(
   if (user && user_id && user.matchesId(user_id)) {
     return next();
   }
-
+  
+  const path = `${request.baseUrl}${request.route.path}`;
+  console.log("LOG AUTH PATH >>>", path);
+   
   acl.areAnyRolesAllowed(
     roles,
-    request.route.path,
+    path,
     request.method.toLowerCase(),
     (err, isAllowed) => {
       if (err) {

@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
-import { EventCoverModel } from "./event_cover.model";
-import { EventHasAddressModel } from "./event_has_address.model";
-import { EventResponsibleModel } from "./event_responsible.model";
-import { EventTypeModel } from "./event_type.model";
-import { MainSubjectModel } from "./main_subject.model";
+import { EventCoverModel } from "./event-cover.model";
+import { EventHasAddressModel } from "./event-has-address.model";
+import { EventResponsibleModel } from "./event-responsible.model";
+import { EventTypeModel } from "./event-type.model";
+import { MainSubjectModel } from "./main-subject.model";
 import { UserModel } from "./user.model";
 
 export class EventModel {

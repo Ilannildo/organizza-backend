@@ -1,6 +1,6 @@
 import { EventModel } from "./event.model";
-import { SessionCoverModel } from "./session_cover.model";
-import { SessionTypeModel } from "./session_type.model";
+import { SessionCoverModel } from "./session-cover.model";
+import { SessionTypeModel } from "./session-type.model";
 
 export class SessionModel {
   public readonly id: string;

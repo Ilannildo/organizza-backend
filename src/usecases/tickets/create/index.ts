@@ -1,11 +1,11 @@
-import { EventRepository } from "../../../repositories/implementations/EventsRepository";
-import { TicketRepository } from "../../../repositories/implementations/TicketsRepository";
-import { CreateEventTicketController } from "./CreateEventTicketController";
+import { PrismaEventRepository } from "../../../repositories/implementations/prisma-event.repository";
+import { PrismaTicketRepository } from "../../../repositories/implementations/prisma-ticket.repository";
+import { CreateTicketController } from "./create-ticket.controller";
 
-const eventRepository = new EventRepository();
-const ticketRepository = new TicketRepository();
+const prismaEventRepository = new PrismaEventRepository();
+const prismaTicketRepository = new PrismaTicketRepository();
 
-export const createEventTicketController = new CreateEventTicketController(
-  eventRepository,
-  ticketRepository
+export const createTicketController = new CreateTicketController(
+  prismaEventRepository,
+  prismaTicketRepository
 );

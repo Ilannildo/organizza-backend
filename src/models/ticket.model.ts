@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { EventModel } from "./event.model";
-import { TicketPriceTypeModel } from "./ticket_price_type.model";
+import { TicketPriceTypeModel } from "./ticket-price-type.model";
 
 export class TicketModel {
     public id: string;

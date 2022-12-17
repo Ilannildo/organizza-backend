@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { CityModel } from "./city.model";
-import { EventHasAddressModel } from "./event_has_address.model";
-import { UserHasAddressModel } from "./user_has_address.model";
+import { EventHasAddressModel } from "./event-has-address.model";
+import { UserHasAddressModel } from "./user-has-address.model";
 
 export class AddressModel {
   public readonly id: string;
