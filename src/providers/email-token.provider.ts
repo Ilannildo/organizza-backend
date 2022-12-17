@@ -1,12 +1,12 @@
 import { format } from "date-fns";
 import { EmailTokenModel } from "../models/email-token.model";
 import { IEmailTokenRepository } from "../repositories/interfaces/email-token-repository";
-import { SendEmailConfimation } from "./send-email-confimation";
+import { SendEmailConfimationProvider } from "./send-email-confimation.provider";
 
 export class EmailTokenProvider {
   constructor(
     private emailTokenRepository: IEmailTokenRepository,
-    private sendEmailConfimation: SendEmailConfimation
+    private sendEmailConfimationProvider: SendEmailConfimationProvider
   ) {}
 
   async execute(data: EmailTokenModel) {
@@ -16,7 +16,7 @@ export class EmailTokenProvider {
       const expired = new Date(exists.expires_in * 1000);
       if (expired >= now) {
         if (!exists.email_sent) {
-          const sending = await this.sendEmailConfimation.execute({
+          const sending = await this.sendEmailConfimationProvider.execute({
             email: exists.user.email,
             email_token: exists,
             name: exists.user.name,
@@ -43,7 +43,7 @@ export class EmailTokenProvider {
       }
       const created = await this.emailTokenRepository.save(data);
 
-      const sending = await this.sendEmailConfimation.execute({
+      const sending = await this.sendEmailConfimationProvider.execute({
         email: created.user.email,
         email_token: created,
         name: created.user.name,
@@ -65,7 +65,7 @@ export class EmailTokenProvider {
 
     const created = await this.emailTokenRepository.save(data);
     console.log("Criando novo email token");
-    const sending = await this.sendEmailConfimation.execute({
+    const sending = await this.sendEmailConfimationProvider.execute({
       email: created.user.email,
       email_token: created,
       name: created.user.name,

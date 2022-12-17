@@ -1,15 +1,15 @@
-import { EmailTokenProvider } from "../../../providers/email-token-provider";
-import { SendEmailConfimation } from "../../../providers/send-email-confimation";
+import { EmailTokenProvider } from "../../../providers/email-token.provider";
+import { SendEmailConfimationProvider } from "../../../providers/send-email-confimation.provider";
 import { PrismaEmailTokenRepository } from "../../../repositories/implementations/prisma-email-token.repository";
 import { PrismaUserRepository } from "../../../repositories/implementations/prisma-user.respository";
 import { UserAccountController } from "./user-account.controller";
 
 const prismaUserRepository = new PrismaUserRepository();
-const sendEmailConfimation = new SendEmailConfimation();
+const sendEmailConfimationProvider = new SendEmailConfimationProvider();
 const prismaEmailTokenRepository = new PrismaEmailTokenRepository();
 const emailTokenProvider = new EmailTokenProvider(
   prismaEmailTokenRepository,
-  sendEmailConfimation
+  sendEmailConfimationProvider
 );
 const userAccountController = new UserAccountController(
   prismaUserRepository,

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
-import { EmailTokenProvider } from "../../../providers/email-token-provider";
+import { EmailTokenProvider } from "../../../providers/email-token.provider";
 import { EmailTokenModel } from "../../../models/email-token.model";
 import * as responses from "../../../utils/formatters/responses";
 import { EmailConfigs } from "../../../config/email";

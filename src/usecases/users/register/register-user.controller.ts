@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { EmailTokenProvider } from "../../../providers/email-token-provider";
+import { EmailTokenProvider } from "../../../providers/email-token.provider";
 import { IRolesRepository } from "../../../repositories/interfaces/role-repository";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 import * as responses from "../../../utils/formatters/responses";

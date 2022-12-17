@@ -2,7 +2,7 @@ import { nodeMailerTransporter } from "../config/nodemailer";
 import { EmailTokenModel } from "../models/email-token.model";
 import { emailConfirmationAccountHtml } from "../utils/templates/email-html/email-confirmation-account";
 
-export class SendEmailConfimation {
+export class SendEmailConfimationProvider {
   async execute({
     name,
     email,

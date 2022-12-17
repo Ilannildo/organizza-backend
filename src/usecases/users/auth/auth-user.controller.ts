@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { compare } from "bcryptjs";
 
-import { GenerateAccessTokenProvider } from "../../../providers/generate-access-token-provider";
+import { GenerateAccessTokenProvider } from "../../../providers/generate-access-token.provider";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
-import { EmailTokenProvider } from "../../../providers/email-token-provider";
+import { EmailTokenProvider } from "../../../providers/email-token.provider";
 import { EmailTokenModel } from "../../../models/email-token.model";
 import { HttpStatus } from "../../../utils/httpStatus";
 import { EmailConfigs } from "../../../config/email";
