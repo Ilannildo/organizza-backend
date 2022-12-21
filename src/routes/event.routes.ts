@@ -11,6 +11,8 @@ import { multerConfigs } from "../config/multer";
 
 import * as eventsValidations from "../validations/events.validation";
 import * as policies from "../utils/policies/v1/users.policy";
+import { getAllTicketByEventIdController } from "../usecases/tickets/get-all-by-event-id";
+import { eventGeneralInformation } from "../usecases/events/general-information";
 
 export const eventRoutes = Router();
 
@@ -53,8 +55,24 @@ eventRoutes
 eventRoutes
   .route("/:event_id/tickets")
   .all(policies.isAllowed)
-  .post((request: Request, response: Response) => {
+  .post((request: Request<{ event_id: string }>, response: Response) => {
     return createTicketController.handle(request, response);
+  });
+
+// busca todos os ingressos pelo id do evento
+eventRoutes
+  .route("/:event_id/tickets")
+  .all(policies.isAllowed)
+  .get((request: Request<{ event_id: string }>, response: Response) => {
+    return getAllTicketByEventIdController.handle(request, response);
+  });
+
+// busca as informações gerais para exebir no painel
+eventRoutes
+  .route("/:event_id/general-informations")
+  .all(policies.isAllowed)
+  .get((request: Request<{ event_id: string }>, response: Response) => {
+    return eventGeneralInformation.handle(request, response);
   });
 
 // buscar evento pelo slug

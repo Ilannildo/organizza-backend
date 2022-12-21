@@ -1,6 +1,6 @@
 import { TicketModel } from "../../models/ticket.model";
 
-export interface ITicketsRepository {
+export interface ITicketRepository {
   findById(ticket_id: string): Promise<TicketModel>;
   findByEventId(event_id: string): Promise<TicketModel[]>;
   findAll(): Promise<TicketModel[]>;

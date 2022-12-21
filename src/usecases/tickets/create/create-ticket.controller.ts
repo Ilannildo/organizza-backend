@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
-import { ITicketsRepository } from "../../../repositories/interfaces/ticket-repository";
+import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
 import { TicketModel } from "../../../models/ticket.model";
 import { HttpStatus } from "../../../utils/httpStatus";
 import { Codes } from "../../../utils/codes";
@@ -9,9 +9,9 @@ import { Codes } from "../../../utils/codes";
 export class CreateTicketController {
   constructor(
     private eventsRepository: IEventsRepository,
-    private ticketsRepository: ITicketsRepository
+    private ticketRepository: ITicketRepository
   ) {}
-  async handle(request: Request, response: Response) {
+  async handle(request: Request<{ event_id: string }>, response: Response) {
     try {
       const {
         category_title,
@@ -80,13 +80,9 @@ export class CreateTicketController {
         sold: 0,
       });
       //
-      const ticketCreated = await this.ticketsRepository.save(ticket);
+      const ticketCreated = await this.ticketRepository.save(ticket);
 
-      return sendSuccessful(
-        response,
-        ticketCreated,
-        HttpStatus.CREATED
-      );
+      return sendSuccessful(response, ticketCreated, HttpStatus.CREATED);
     } catch (error) {
       return sendError(
         response,

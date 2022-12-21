@@ -98,6 +98,24 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.VIEW_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id/tickets",
+          permissions: ["get"],
+        },
+      ],
+    },
+    {
+      roles: [POLICY_ROLES.VIEW_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id/general-informations",
+          permissions: ["get"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.DELETE_EVENT],
       allows: [
         {

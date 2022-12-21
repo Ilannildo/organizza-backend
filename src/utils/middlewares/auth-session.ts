@@ -21,7 +21,7 @@ export function authSessionMiddleware(
     return sendError(
       res,
       Codes.AUTH__UNEXPECTED_AUTHORIZATION,
-      "Token is missing",
+      "Sua sessão foi encerrada",
       HttpStatus.UNAUTHORIZED
     );
   }

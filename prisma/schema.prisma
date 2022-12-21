@@ -8,24 +8,26 @@ datasource db {
 }
 
 model User {
-  uid                  String          @id @default(uuid())
-  name                 String          @db.VarChar(150)
-  email                String          @unique(map: "email")
-  gender               String?         @db.VarChar(15)
-  phone                String?         @db.VarChar(32)
-  password             String
-  photo_url            String?
-  name_badge           String?         @db.VarChar(150)
-  status               Boolean         @default(false)
-  email_verificated_at DateTime?
-  role_id              String
-  created_at           DateTime        @default(now())
-  updated_at           DateTime        @updatedAt
-  deleted_at           DateTime?
-  role                 Role            @relation(fields: [role_id], references: [id])
-  user_has_address     UserHasAddress?
-  events               Event[]
-  email_token          EmailToken?
+  uid                   String                @id @default(uuid())
+  name                  String                @db.VarChar(150)
+  email                 String                @unique(map: "email")
+  gender                String?               @db.VarChar(15)
+  phone                 String?               @db.VarChar(32)
+  password              String
+  photo_url             String?
+  name_badge            String?               @db.VarChar(150)
+  status                Boolean               @default(false)
+  email_verificated_at  DateTime?
+  role_id               String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  role                  Role                  @relation(fields: [role_id], references: [id])
+  user_has_address      UserHasAddress?
+  email_token           EmailToken?
+  events                Event[]
+  subscriptions         Subscription[]
+  session_subscriptions SessionSubscription[]
 
   @@map("users")
 }
@@ -43,7 +45,7 @@ model Role {
   view_event     Boolean  @default(false)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
-  User           User[]
+  users          User[]
 
   @@map("roles")
 }
@@ -58,7 +60,7 @@ model EmailToken {
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
 
-  @@map("email_token")
+  @@map("email_tokens")
 }
 
 model State {
@@ -147,6 +149,7 @@ model Event {
   event_has_address    EventHasAddress?
   sessions             Session[]
   tickets              Ticket[]
+  subscriptions        Subscription[]
 
   @@map("events")
 }
@@ -173,18 +176,6 @@ model EventCover {
   @@map("event_covers")
 }
 
-model SessionCover {
-  id         String  @id @default(uuid())
-  session_id String  @unique
-  name       String
-  size       Int
-  key        String
-  url        String?
-  session    Session @relation(fields: [session_id], references: [id])
-
-  @@map("session_covers")
-}
-
 model EventResponsible {
   id          String    @id @default(uuid())
   name        String
@@ -201,17 +192,6 @@ model EventResponsible {
   @@map("event_responsibles")
 }
 
-model MainSubject {
-  id         String    @id @default(uuid())
-  title      String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-  events     Event[]
-
-  @@map("main_subjects")
-}
-
 model EventType {
   id         String    @id @default(uuid())
   title      String
@@ -224,28 +204,76 @@ model EventType {
   @@map("event_types")
 }
 
+model Ticket {
+  id                    String               @id @default(uuid())
+  category_title        String
+  include_fee           Boolean
+  event_id              String
+  ticket_price_type_id  String
+  participant_limit     Int
+  description           String?
+  value                 Float
+  sold                  Int?
+  start_date            DateTime
+  start_time            DateTime
+  due_date              DateTime
+  due_time              DateTime
+  created_at            DateTime             @default(now())
+  updated_at            DateTime             @updatedAt
+  event                 Event                @relation(fields: [event_id], references: [id])
+  ticket_price_type     TicketPriceType      @relation(fields: [ticket_price_type_id], references: [id])
+  ticket_service_orders TicketServiceOrder[]
+
+  @@map("tickets")
+}
+
+model MainSubject {
+  id         String    @id @default(uuid())
+  title      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  events     Event[]
+
+  @@map("main_subjects")
+}
+
 model Session {
-  id               String        @id @default(uuid())
-  title            String
-  credit_hour      Int?
-  summary          String?
-  responsible_name String
-  event_id         String
-  session_type_id  String
-  place            String
-  start_date       DateTime
-  start_time       DateTime
-  end_date         DateTime
-  end_time         DateTime
-  status           EventStatus
-  created_at       DateTime      @default(now())
-  updated_at       DateTime      @updatedAt
-  deleted_at       DateTime?
-  event            Event         @relation(fields: [event_id], references: [id])
-  session_cover    SessionCover?
-  session_type     SessionType   @relation(fields: [session_type_id], references: [id])
+  id                    String                @id @default(uuid())
+  title                 String
+  credit_hour           Int?
+  summary               String?
+  responsible_name      String
+  event_id              String
+  session_type_id       String
+  place                 String
+  start_date            DateTime
+  start_time            DateTime
+  end_date              DateTime
+  end_time              DateTime
+  status                EventStatus
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  event                 Event                 @relation(fields: [event_id], references: [id])
+  session_cover         SessionCover?
+  session_type          SessionType           @relation(fields: [session_type_id], references: [id])
+  session_tickets       SessionTicket[]
+  session_subscriptions SessionSubscription[]
 
   @@map("sessions")
+}
+
+model SessionCover {
+  id         String  @id @default(uuid())
+  session_id String  @unique
+  name       String
+  size       Int
+  key        String
+  url        String?
+  session    Session @relation(fields: [session_id], references: [id])
+
+  @@map("session_covers")
 }
 
 model SessionType {
@@ -260,37 +288,39 @@ model SessionType {
   @@map("session_types")
 }
 
-model Ticket {
-  id                   String          @id @default(uuid())
-  category_title       String
-  include_fee          Boolean
-  event_id             String
-  ticket_price_type_id String
-  participant_limit    Int
-  description          String?
-  value                Float
-  sold                 Int?
-  start_date           DateTime
-  start_time           DateTime
-  due_date             DateTime
-  due_time             DateTime
-  created_at           DateTime        @default(now())
-  updated_at           DateTime        @updatedAt
-  event                Event           @relation(fields: [event_id], references: [id])
-  ticket_price_type    TicketPriceType @relation(fields: [ticket_price_type_id], references: [id])
+model SessionTicket {
+  id                            String                      @id @default(uuid())
+  category_title                String
+  include_fee                   Boolean
+  session_id                    String
+  ticket_price_type_id          String
+  participant_limit             Int
+  description                   String?
+  value                         Float
+  sold                          Int?
+  start_date                    DateTime
+  start_time                    DateTime
+  due_date                      DateTime
+  due_time                      DateTime
+  created_at                    DateTime                    @default(now())
+  updated_at                    DateTime                    @updatedAt
+  session                       Session                     @relation(fields: [session_id], references: [id])
+  ticket_price_type             TicketPriceType             @relation(fields: [ticket_price_type_id], references: [id])
+  session_ticket_service_orders SessionTicketServiceOrder[]
 
-  @@map("tickets")
+  @@map("session_tickets")
 }
 
 model TicketPriceType {
-  id                   String   @id @default(uuid())
-  title                String
-  quote_id             String
-  is_free              Boolean
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
-  quote                Quote    @relation(fields: [quote_id], references: [id])
-  tickets              Ticket[]
+  id              String          @id @default(uuid())
+  title           String
+  quote_id        String
+  is_free         Boolean
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  quote           Quote           @relation(fields: [quote_id], references: [id])
+  tickets         Ticket[]
+  session_tickets SessionTicket[]
 
   @@map("ticket_price_types")
 }
@@ -308,13 +338,176 @@ model Quote {
   @@map("quotes")
 }
 
+model ServiceOrder {
+  id                           String                     @id @default(uuid())
+  user_id                      String
+  amount_total                 Float
+  status                       ServiceOrderStatus
+  reason_canceled              String?
+  paid_at                      DateTime?
+  created_at                   DateTime                   @default(now())
+  updated_at                   DateTime                   @default(now()) @updatedAt
+  ticket_service_order         TicketServiceOrder?
+  session_ticket_service_order SessionTicketServiceOrder?
+  transactions                 Transaction[]
+
+  @@map("service_orders")
+}
+
+model TicketServiceOrder {
+  id               String        @id @default(uuid())
+  service_order_id String        @unique
+  ticket_id        String
+  service_order    ServiceOrder  @relation(fields: [service_order_id], references: [id])
+  ticket           Ticket        @relation(fields: [ticket_id], references: [id])
+  subscription     Subscription?
+
+  @@map("ticket_service_orders")
+}
+
+model SessionTicketServiceOrder {
+  id                   String               @id @default(uuid())
+  service_order_id     String               @unique
+  session_ticket_id    String
+  service_order        ServiceOrder         @relation(fields: [service_order_id], references: [id])
+  session_ticket       SessionTicket        @relation(fields: [session_ticket_id], references: [id])
+  session_subscription SessionSubscription?
+
+  @@map("session_ticket_service_orders")
+}
+
+model PaymentMethod {
+  id           String            @id @default(uuid())
+  payment_form PaymentMethodType
+  name         String
+  fee          Float
+  installments Int
+  status       Boolean           @default(false)
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @default(now()) @updatedAt
+  transactions Transaction[]
+
+  @@map("payment_methods")
+}
+
+model Subscription {
+  id                      String             @id @default(uuid())
+  user_id                 String
+  event_id                String
+  code_ref                String
+  ticket_service_order_id String             @unique
+  status                  SubscriptionStatus
+  created_at              DateTime           @default(now())
+  updated_at              DateTime           @default(now()) @updatedAt
+  user                    User               @relation(fields: [user_id], references: [uid])
+  event                   Event              @relation(fields: [event_id], references: [id])
+  ticket_service_order    TicketServiceOrder @relation(fields: [ticket_service_order_id], references: [id])
+
+  @@map("subscriptions")
+}
+
+model SessionSubscription {
+  id                              String                    @id @default(uuid())
+  user_id                         String
+  session_id                      String
+  code_ref                        String
+  session_ticket_service_order_id String                    @unique
+  status                          SubscriptionStatus
+  created_at                      DateTime                  @default(now())
+  updated_at                      DateTime                  @default(now()) @updatedAt
+  user                            User                      @relation(fields: [user_id], references: [uid])
+  session                         Session                   @relation(fields: [session_id], references: [id])
+  session_ticket_service_order    SessionTicketServiceOrder @relation(fields: [session_ticket_service_order_id], references: [id])
+
+  @@map("session_subscriptions")
+}
+
+model Transaction {
+  id                   String               @id @default(uuid())
+  payment_method_id    String
+  service_order_id     String
+  transaction_id       String
+  processed_response   String?
+  customer_email       String
+  customer_name        String
+  customer_phone       String
+  customer_document    String
+  billing_address      String?
+  billing_number       String?
+  billing_neighborhood String?
+  billing_city         String?
+  billing_state        String?
+  billing_zipcode      String?
+  operation            TransactionOperation
+  status               TransactionStatus
+  type                 TransactionType
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @default(now()) @updatedAt
+  payment_method       PaymentMethod        @relation(fields: [payment_method_id], references: [id])
+  service_order        ServiceOrder         @relation(fields: [service_order_id], references: [id])
+
+  @@map("transactions")
+}
+
 enum EventVenueType {
   presential
   online
 }
 
 enum EventStatus {
-  published
-  started
-  finished
+  published // publicado
+  started // iniciado
+  finished // encerrado
+}
+
+enum CartType {
+  event
+  session
+}
+
+enum SubscriptionStatus {
+  pending // pendente
+  processing // processando
+  completed // completa
+  refused // recusada
+}
+
+enum ServiceOrderStatus {
+  open // aberta
+  processing // processando
+  settled // quitada
+  closed // fechada
+  canceled // cancelada
+}
+
+enum PaymentMethodType {
+  credit // credito
+  debit // debito
+  check // cheque
+  bank_slip // boleto
+  cash // dinheiro
+  deposit // deposito
+  wallet // carteira
+  transfer // trasnferencia
+}
+
+enum TransactionStatus {
+  started // iniciada
+  processing // processando
+  pending // pendente
+  approved // aprovada
+  refused // recusada
+  refunded // devolvida
+  chargeback // estorno
+  error // error
+}
+
+enum TransactionOperation {
+  withdraw // saqui
+  order // ordem servinço
+}
+
+enum TransactionType {
+  input // entrada
+  output // saida
 }

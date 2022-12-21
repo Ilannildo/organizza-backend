@@ -1,8 +1,8 @@
 import { TicketModel } from "../../models/ticket.model";
 import { client } from "../../prisma/client";
-import { ITicketsRepository } from "../interfaces/ticket-repository";
+import { ITicketRepository } from "../interfaces/ticket-repository";
 
-export class PrismaTicketRepository implements ITicketsRepository {
+export class PrismaTicketRepository implements ITicketRepository {
   async findById(ticket_id: string): Promise<TicketModel> {
     const ticket = await client.ticket.findFirst({
       where: {
@@ -15,6 +15,13 @@ export class PrismaTicketRepository implements ITicketsRepository {
     const ticket = await client.ticket.findMany({
       where: {
         event_id,
+      },
+      include: {
+        ticket_price_type: {
+          include: {
+            quote: true,
+          },
+        },
       },
     });
     return ticket;
