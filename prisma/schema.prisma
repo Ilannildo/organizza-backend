@@ -28,24 +28,33 @@ model User {
   events                Event[]
   subscriptions         Subscription[]
   session_subscriptions SessionSubscription[]
+  service_orders        ServiceOrder[]
 
   @@map("users")
 }
 
 model Role {
-  id             String   @id @default(uuid())
-  name           String   @db.VarChar(150)
-  register_user  Boolean  @default(false)
-  delete_user    Boolean  @default(false)
-  edit_user      Boolean  @default(false)
-  view_user      Boolean  @default(false)
-  register_event Boolean  @default(false)
-  delete_event   Boolean  @default(false)
-  edit_event     Boolean  @default(false)
-  view_event     Boolean  @default(false)
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
-  users          User[]
+  id               String   @id @default(uuid())
+  name             String   @db.VarChar(150)
+  register_user    Boolean  @default(false)
+  delete_user      Boolean  @default(false)
+  edit_user        Boolean  @default(false)
+  view_user        Boolean  @default(false)
+  register_event   Boolean  @default(false)
+  delete_event     Boolean  @default(false)
+  edit_event       Boolean  @default(false)
+  view_event       Boolean  @default(false)
+  register_ticket  Boolean  @default(false)
+  delete_ticket    Boolean  @default(false)
+  edit_ticket      Boolean  @default(false)
+  view_ticket      Boolean  @default(false)
+  register_session Boolean  @default(false)
+  delete_session   Boolean  @default(false)
+  edit_session     Boolean  @default(false)
+  view_session     Boolean  @default(false)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  users            User[]
 
   @@map("roles")
 }
@@ -350,6 +359,7 @@ model ServiceOrder {
   ticket_service_order         TicketServiceOrder?
   session_ticket_service_order SessionTicketServiceOrder?
   transactions                 Transaction[]
+  user                         User                       @relation(fields: [user_id], references: [uid])
 
   @@map("service_orders")
 }

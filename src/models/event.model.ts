@@ -4,6 +4,9 @@ import { EventHasAddressModel } from "./event-has-address.model";
 import { EventResponsibleModel } from "./event-responsible.model";
 import { EventTypeModel } from "./event-type.model";
 import { MainSubjectModel } from "./main-subject.model";
+import { SessionModel } from "./session.model";
+import { SubscriptionModel } from "./subscription.model";
+import { TicketModel } from "./ticket.model";
 import { UserModel } from "./user.model";
 
 export class EventModel {
@@ -37,6 +40,9 @@ export class EventModel {
   public event_type?: EventTypeModel;
   public event_cover?: EventCoverModel;
   public event_has_address?: EventHasAddressModel;
+  public sessions?: SessionModel[];
+  public tickets?: TicketModel[];
+  public subscriptions?: SubscriptionModel[];
 
   constructor(props: Omit<EventModel, "id">, id?: string) {
     Object.assign(this, props);

@@ -1,6 +1,9 @@
+import { v4 as uuid } from "uuid";
 import { EventModel } from "./event.model";
 import { SessionCoverModel } from "./session-cover.model";
+import { SessionSubscriptionModel } from "./session-subscription.model";
 import { SessionTypeModel } from "./session-type.model";
+import { SessionTicketModel } from "./session-ticket.model";
 
 export class SessionModel {
   public readonly id: string;
@@ -22,4 +25,14 @@ export class SessionModel {
   public event?: EventModel;
   public session_cover?: SessionCoverModel;
   public session_type?: SessionTypeModel;
+  public session_tickets?: SessionTicketModel[];
+  public session_subscriptions?: SessionSubscriptionModel[];
+
+  constructor(props: Omit<SessionModel, "id">, id?: string) {
+    Object.assign(this, props);
+
+    if (!id) {
+      this.id = uuid();
+    }
+  }
 }

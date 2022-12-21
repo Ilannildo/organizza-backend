@@ -1,11 +1,11 @@
 import { v4 as uuid } from "uuid";
-import { EventModel } from "./event.model";
+import { SessionTicketServiceOrderModel } from "./session-ticket-service-order.model";
+import { SessionModel } from "./session.model";
 import { TicketPriceTypeModel } from "./ticket-price-type.model";
-import { TicketServiceOrderModel } from "./ticket-service-order.model";
 
-export class TicketModel {
+export class SessionTicketModel {
   public id: string;
-  public event_id: string;
+  public session_id: string;
   public ticket_price_type_id: string;
   public category_title: string;
   public include_fee: boolean;
@@ -18,11 +18,11 @@ export class TicketModel {
   public due_date: Date | null;
   public due_time: Date | null;
 
-  public event?: EventModel;
+  public session?: SessionModel;
   public ticket_price_type?: TicketPriceTypeModel;
-  public ticket_service_order?: TicketServiceOrderModel[];
+  public session_ticket_service_orders?: SessionTicketServiceOrderModel[];
 
-  constructor(props: Omit<TicketModel, "id">, id?: string) {
+  constructor(props: Omit<SessionTicketModel, "id">, id?: string) {
     Object.assign(this, props);
 
     if (!id) {

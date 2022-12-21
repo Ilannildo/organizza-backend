@@ -12,6 +12,14 @@ export class RoleModel {
   public delete_event: boolean;
   public edit_event: boolean;
   public view_event: boolean;
+  public register_ticket: boolean;
+  public delete_ticket: boolean;
+  public edit_ticket: boolean;
+  public view_ticket: boolean;
+  public register_session: boolean;
+  public delete_session: boolean;
+  public edit_session: boolean;
+  public view_session: boolean;
   public created_at?: Date;
   public updated_at?: Date;
   public user?: UserModel[];
