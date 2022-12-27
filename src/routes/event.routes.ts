@@ -77,7 +77,7 @@ eventRoutes
 
 // buscar evento pelo slug
 eventRoutes
-  .route("/api/events/slug")
+  .route("/slug")
   .get((request: RequestWithAuth, response: Response) => {
     return findEventController.handle(request, response);
   });

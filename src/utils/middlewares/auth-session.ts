@@ -9,7 +9,14 @@ export function authSessionMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  const autheticationPaths = ["/api/auth/login", "/api/auth/register", "/api/auth/confirm-email"];
+  const autheticationPaths = [
+    "/api/auth/login",
+    "/api/auth/register",
+    "/api/auth/confirm-email",
+    "/api/event-page",
+    "/api/event-page/tickets",
+    "/api/event-page/sessions",
+  ];
   const filesPath = "/files";
 
   if (autheticationPaths.includes(req.path) || req.path.includes(filesPath)) {

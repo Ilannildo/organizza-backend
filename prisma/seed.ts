@@ -3,6 +3,7 @@ import { setupCities } from "../setup/cities";
 import { setupEventTypes } from "../setup/event_types";
 import { setupMainSubjects } from "../setup/main_subjects";
 import { setupRoles } from "../setup/roles";
+import { setupSessionTypes } from "../setup/session-types";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,8 @@ async function main() {
   await setupMainSubjects();
 
   await setupCities();
+
+  await setupSessionTypes();
 }
 
 main()

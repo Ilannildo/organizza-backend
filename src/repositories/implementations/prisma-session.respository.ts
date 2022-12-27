@@ -1,0 +1,74 @@
+import { SessionModel } from "../../models/session.model";
+import { client } from "../../prisma/client";
+import { ISessionRepository } from "../interfaces/session-repository";
+
+export class PrismaSessionRepository implements ISessionRepository {
+  async findAllBySessionTypeId(data: {
+    sessionTypeId: string;
+  }): Promise<SessionModel[]> {
+    const sessions = await client.session.findMany({
+      where: {
+        session_type_id: data.sessionTypeId,
+      },
+      include: {
+        session_cover: true,
+        event: true,
+        session_subscriptions: true,
+        session_tickets: true,
+        session_type: true,
+      },
+    });
+    return sessions;
+  }
+  findById(ticket_id: string): Promise<SessionModel> {
+    throw new Error("Method not implemented.");
+  }
+  async findByEventId(event_id: string): Promise<SessionModel[]> {
+    const sessions = await client.session.findMany({
+      where: {
+        event_id,
+      },
+      include: {
+        session_cover: true,
+        event: true,
+        session_subscriptions: true,
+        session_tickets: true,
+        session_type: true,
+      },
+    });
+    return sessions;
+  }
+  findAll(): Promise<SessionModel[]> {
+    throw new Error("Method not implemented.");
+  }
+  async update(data: SessionModel): Promise<SessionModel> {
+    const session = await client.session.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        credit_hour: data.credit_hour,
+        place: data.place,
+        responsible_name: data.responsible_name,
+        status: data.status,
+        summary: data.summary,
+        title: data.title,
+        end_date: data.end_date,
+        end_time: data.end_time,
+        start_date: data.start_date,
+        start_time: data.start_time,
+      },
+      include: {
+        session_cover: true,
+        event: true,
+        session_subscriptions: true,
+        session_tickets: true,
+        session_type: true,
+      },
+    });
+    return session;
+  }
+  save(data: SessionModel): Promise<SessionModel> {
+    throw new Error("Method not implemented.");
+  }
+}

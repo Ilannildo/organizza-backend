@@ -289,6 +289,8 @@ model SessionType {
   id         String    @id @default(uuid())
   title      String
   icon_name  String?
+  is_menu    Boolean   @default(false)
+  is_active  Boolean   @default(true)
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
@@ -350,15 +352,19 @@ model Quote {
 model ServiceOrder {
   id                           String                     @id @default(uuid())
   user_id                      String
+  payment_method_id            String
   amount_total                 Float
-  status                       ServiceOrderStatus
+  status                       ServiceOrderStatus         @default(open)
   reason_canceled              String?
+  type                         ServiceOrderType
+  expires_in                   Int
   paid_at                      DateTime?
   created_at                   DateTime                   @default(now())
   updated_at                   DateTime                   @default(now()) @updatedAt
   ticket_service_order         TicketServiceOrder?
   session_ticket_service_order SessionTicketServiceOrder?
   transactions                 Transaction[]
+  payment_method               PaymentMethod              @relation(fields: [payment_method_id], references: [id])
   user                         User                       @relation(fields: [user_id], references: [uid])
 
   @@map("service_orders")
@@ -387,15 +393,16 @@ model SessionTicketServiceOrder {
 }
 
 model PaymentMethod {
-  id           String            @id @default(uuid())
-  payment_form PaymentMethodType
-  name         String
-  fee          Float
-  installments Int
-  status       Boolean           @default(false)
-  created_at   DateTime          @default(now())
-  updated_at   DateTime          @default(now()) @updatedAt
-  transactions Transaction[]
+  id             String            @id @default(uuid())
+  payment_form   PaymentMethodType
+  name           String
+  fee            Float
+  installments   Int
+  status         Boolean           @default(false)
+  created_at     DateTime          @default(now())
+  updated_at     DateTime          @default(now()) @updatedAt
+  transactions   Transaction[]
+  service_orders ServiceOrder[]
 
   @@map("payment_methods")
 }
@@ -436,7 +443,7 @@ model Transaction {
   id                   String               @id @default(uuid())
   payment_method_id    String
   service_order_id     String
-  transaction_id       String
+  transaction_id       String?
   processed_response   String?
   customer_email       String
   customer_name        String
@@ -470,7 +477,7 @@ enum EventStatus {
   finished // encerrado
 }
 
-enum CartType {
+enum ServiceOrderType {
   event
   session
 }

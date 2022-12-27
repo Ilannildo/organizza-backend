@@ -84,6 +84,17 @@ export class PrismaEventRepository implements IEventsRepository {
       where: {
         slug,
       },
+      include: {
+        event_has_address: {
+          include: {
+            address: true,
+          },
+        },
+        event_type: true,
+        main_subject: true,
+        event_responsible: true,
+        event_cover: true,
+      },
     });
     return event;
   }
@@ -94,8 +105,8 @@ export class PrismaEventRepository implements IEventsRepository {
         created_by_user_id: user_id,
       },
       include: {
-        event_cover: true
-      }
+        event_cover: true,
+      },
     });
 
     return events;
@@ -127,6 +138,17 @@ export class PrismaEventRepository implements IEventsRepository {
       },
       where: {
         id: data.id,
+      },
+      include: {
+        event_has_address: {
+          include: {
+            address: true,
+          },
+        },
+        event_type: true,
+        main_subject: true,
+        event_responsible: true,
+        event_cover: true,
       },
     });
 

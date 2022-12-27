@@ -26,10 +26,12 @@ export class PrismaTicketRepository implements ITicketRepository {
     });
     return ticket;
   }
+
   async findAll(): Promise<TicketModel[]> {
     const ticket = await client.ticket.findMany();
     return ticket;
   }
+  
   async update(data: TicketModel): Promise<TicketModel> {
     const ticket = await client.ticket.update({
       data: {

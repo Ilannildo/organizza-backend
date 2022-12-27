@@ -6,6 +6,8 @@ export class SessionTypeModel {
   public readonly id: string;
   public title: string;
   public icon_name?: string;
+  public is_menu: boolean;
+  public is_active: boolean;
   public created_at?: Date;
   public updated_at?: Date;
   public deleted_at?: Date;
