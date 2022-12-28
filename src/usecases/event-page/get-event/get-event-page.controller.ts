@@ -21,7 +21,7 @@ export class GetEventPageController {
 
       const nowDate = new Date();
       if (
-        event.end_date.getDate() <= nowDate.getDate() &&
+        event.end_date <= nowDate &&
         event.end_time.getTime() <= nowDate.getTime()
       ) {
         event = await this.eventsRepository.update({

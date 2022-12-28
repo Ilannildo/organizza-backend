@@ -18,10 +18,3 @@ sessionTypesRoutes
   .get((request: Request<{ session_type_id: string }>, response: Response) => {
     return getSessionTypeByIdController.handle(request, response);
   });
-
-// todos os estados
-sessionTypesRoutes
-  .route("/:session_type_id/sessions")
-  .get((request: Request<{ session_type_id: string }>, response: Response) => {
-    return getAllSessionBySessionTypeController.handle(request, response);
-  });

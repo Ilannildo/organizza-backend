@@ -6,6 +6,11 @@ import { Codes } from "../../../utils/codes";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
 import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
 
+interface IQuery {
+  page: number;
+  limit: number;
+}
+
 export class GetAllTicketByEventIdController {
   constructor(
     private eventRepository: IEventsRepository,
@@ -13,6 +18,7 @@ export class GetAllTicketByEventIdController {
   ) {}
 
   async handle(request: Request<{ event_id: string }>, response: Response) {
+    let { page = 1, limit = 20 } = request.query as unknown as IQuery;
     const { event_id } = request.params;
     try {
       const eventAlreadyExistsById = await this.eventRepository.findById(
@@ -28,11 +34,18 @@ export class GetAllTicketByEventIdController {
         );
       }
 
-      const tickets = await this.ticketRepository.findByEventId(
-        eventAlreadyExistsById.id
-      );
+      const [total, tickets] =
+        await this.ticketRepository.findByEventIdPaginate({
+          eventId: eventAlreadyExistsById.id,
+          limit,
+          page,
+        });
 
-      return sendSuccessful(response, tickets, HttpStatus.OK);
+      return sendSuccessful(
+        response,
+        { tickets, total, page, limit },
+        HttpStatus.OK
+      );
     } catch (error) {
       return sendError(
         response,

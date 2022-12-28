@@ -20,6 +20,10 @@ export class RoleModel {
   public delete_session: boolean;
   public edit_session: boolean;
   public view_session: boolean;
+  public register_service_order: boolean;
+  public delete_service_order: boolean;
+  public edit_service_order: boolean;
+  public view_service_order: boolean;
   public created_at?: Date;
   public updated_at?: Date;
   public user?: UserModel[];

@@ -9,11 +9,12 @@ export class ServiceOrderModel {
   public user_id: string;
   public amount_total: number;
   public status: "open" | "processing" | "settled" | "closed" | "canceled";
-  public reason_canceled: string;
-  public paid_at: Date;
+  public reason_canceled?: string;
+  public type: "event" | "session";
+  public expires_in: number;
+  public paid_at?: Date;
   public created_at?: Date;
   public updated_at?: Date;
-
   public ticket_service_order?: TicketServiceOrderModel;
   public session_ticket_service_order?: SessionTicketServiceOrderModel;
   public transactions?: TransactionModel[];

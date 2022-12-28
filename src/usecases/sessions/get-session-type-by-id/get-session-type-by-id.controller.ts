@@ -11,9 +11,10 @@ export class GetSessionTypeByIdController {
     request: Request<{ session_type_id: string }>,
     response: Response
   ) {
+    const { session_type_id } = request.params;
     try {
       const sessionType = await this.sessionTypeRepository.findById({
-        session_type_id: request.params.session_type_id,
+        session_type_id,
       });
 
       if (!sessionType) {

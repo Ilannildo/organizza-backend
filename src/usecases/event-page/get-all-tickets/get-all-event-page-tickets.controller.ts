@@ -8,6 +8,7 @@ import { ITicketRepository } from "../../../repositories/interfaces/ticket-repos
 import { IGetAllEventPageTicketsResponse } from "./get-all-event-page-tickets.dto";
 import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
 import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
+import { format } from "date-fns";
 
 export class GetAllEventPageTicketController {
   constructor(
@@ -66,15 +67,15 @@ export class GetAllEventPageTicketController {
         const now = new Date();
         let status = "Comprar ingresso";
         if (
-          ticket.start_date.getDate() < now.getDate() &&
-          ticket.start_time.getTime() < now.getTime()
+          ticket.start_date > now &&
+          ticket.start_time.getTime() > now.getTime()
         ) {
           status = "Não iniciado";
           available = false;
         }
 
         if (
-          ticket.due_date.getDate() < now.getDate() &&
+          ticket.due_date < now &&
           ticket.due_time.getTime() < now.getTime()
         ) {
           status = "Encerrado";
@@ -89,6 +90,8 @@ export class GetAllEventPageTicketController {
           value: ticketValue,
           available,
           status,
+          due_date: ticket.due_date,
+          due_time: ticket.due_time,
         });
       }
 

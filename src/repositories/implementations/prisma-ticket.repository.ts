@@ -3,10 +3,50 @@ import { client } from "../../prisma/client";
 import { ITicketRepository } from "../interfaces/ticket-repository";
 
 export class PrismaTicketRepository implements ITicketRepository {
+  async findByEventIdPaginate({
+    eventId,
+    limit,
+    page,
+  }: {
+    eventId: string;
+    page: number;
+    limit: number;
+  }): Promise<[number, TicketModel[]]> {
+    const skip = Math.abs(page - 1) * limit;
+    const tickets = await client.$transaction([
+      client.ticket.count({
+        where: {
+          event_id: eventId,
+        },
+      }),
+      client.ticket.findMany({
+        where: {
+          event_id: eventId,
+        },
+        include: {
+          ticket_price_type: {
+            include: {
+              quote: true,
+            },
+          },
+        },
+        skip,
+        take: Number(limit),
+      }),
+    ]);
+    return tickets;
+  }
   async findById(ticket_id: string): Promise<TicketModel> {
     const ticket = await client.ticket.findFirst({
       where: {
         id: ticket_id,
+      },
+      include: {
+        ticket_price_type: {
+          include: {
+            quote: true,
+          },
+        },
       },
     });
     return ticket;
@@ -31,7 +71,7 @@ export class PrismaTicketRepository implements ITicketRepository {
     const ticket = await client.ticket.findMany();
     return ticket;
   }
-  
+
   async update(data: TicketModel): Promise<TicketModel> {
     const ticket = await client.ticket.update({
       data: {

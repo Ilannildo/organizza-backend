@@ -34,27 +34,31 @@ model User {
 }
 
 model Role {
-  id               String   @id @default(uuid())
-  name             String   @db.VarChar(150)
-  register_user    Boolean  @default(false)
-  delete_user      Boolean  @default(false)
-  edit_user        Boolean  @default(false)
-  view_user        Boolean  @default(false)
-  register_event   Boolean  @default(false)
-  delete_event     Boolean  @default(false)
-  edit_event       Boolean  @default(false)
-  view_event       Boolean  @default(false)
-  register_ticket  Boolean  @default(false)
-  delete_ticket    Boolean  @default(false)
-  edit_ticket      Boolean  @default(false)
-  view_ticket      Boolean  @default(false)
-  register_session Boolean  @default(false)
-  delete_session   Boolean  @default(false)
-  edit_session     Boolean  @default(false)
-  view_session     Boolean  @default(false)
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-  users            User[]
+  id                     String   @id @default(uuid())
+  name                   String   @db.VarChar(150)
+  register_user          Boolean  @default(false)
+  delete_user            Boolean  @default(false)
+  edit_user              Boolean  @default(false)
+  view_user              Boolean  @default(false)
+  register_event         Boolean  @default(false)
+  delete_event           Boolean  @default(false)
+  edit_event             Boolean  @default(false)
+  view_event             Boolean  @default(false)
+  register_ticket        Boolean  @default(false)
+  delete_ticket          Boolean  @default(false)
+  edit_ticket            Boolean  @default(false)
+  view_ticket            Boolean  @default(false)
+  register_session       Boolean  @default(false)
+  delete_session         Boolean  @default(false)
+  edit_session           Boolean  @default(false)
+  view_session           Boolean  @default(false)
+  register_service_order Boolean  @default(false)
+  delete_service_order   Boolean  @default(false)
+  edit_service_order     Boolean  @default(false)
+  view_service_order     Boolean  @default(false)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+  users                  User[]
 
   @@map("roles")
 }
@@ -352,7 +356,6 @@ model Quote {
 model ServiceOrder {
   id                           String                     @id @default(uuid())
   user_id                      String
-  payment_method_id            String
   amount_total                 Float
   status                       ServiceOrderStatus         @default(open)
   reason_canceled              String?
@@ -364,7 +367,6 @@ model ServiceOrder {
   ticket_service_order         TicketServiceOrder?
   session_ticket_service_order SessionTicketServiceOrder?
   transactions                 Transaction[]
-  payment_method               PaymentMethod              @relation(fields: [payment_method_id], references: [id])
   user                         User                       @relation(fields: [user_id], references: [uid])
 
   @@map("service_orders")
@@ -393,16 +395,15 @@ model SessionTicketServiceOrder {
 }
 
 model PaymentMethod {
-  id             String            @id @default(uuid())
-  payment_form   PaymentMethodType
-  name           String
-  fee            Float
-  installments   Int
-  status         Boolean           @default(false)
-  created_at     DateTime          @default(now())
-  updated_at     DateTime          @default(now()) @updatedAt
-  transactions   Transaction[]
-  service_orders ServiceOrder[]
+  id           String            @id @default(uuid())
+  payment_form PaymentMethodType
+  name         String
+  fee          Float
+  installments Int
+  status       Boolean           @default(false)
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @default(now()) @updatedAt
+  transactions Transaction[]
 
   @@map("payment_methods")
 }

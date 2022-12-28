@@ -18,6 +18,7 @@ import { userRoutes } from "./routes/user.routes";
 import * as policies from "./utils/policies/v1/users.policy";
 import { eventPageRoutes } from "./routes/event-page.routes";
 import { sessionTypesRoutes } from "./routes/session-type.routes";
+import { serviceOrderRoutes } from "./routes/service-order.routes";
 
 // configurando o .env em ambiente de desenvolvimento
 if (process.env.NODE_ENV !== "production") {
@@ -102,5 +103,8 @@ app.use("/api/event-page", eventPageRoutes);
 
 // adicionando as rotas de pagina de eventos (público)
 app.use("/api/session-types", sessionTypesRoutes);
+
+// adicionando as rotas de pagina de eventos (público)
+app.use("/api/service-orders", serviceOrderRoutes);
 
 export { app };

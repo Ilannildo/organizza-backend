@@ -13,6 +13,7 @@ import * as eventsValidations from "../validations/events.validation";
 import * as policies from "../utils/policies/v1/users.policy";
 import { getAllTicketByEventIdController } from "../usecases/tickets/get-all-by-event-id";
 import { eventGeneralInformation } from "../usecases/events/general-information";
+import { getAllSessionBySessionTypeController } from "../usecases/sessions/get-all-session-by-session-type";
 
 export const eventRoutes = Router();
 
@@ -81,3 +82,15 @@ eventRoutes
   .get((request: RequestWithAuth, response: Response) => {
     return findEventController.handle(request, response);
   });
+
+// buscar evento pelo slug
+eventRoutes
+  .route("/:event_id/session-types/:session_type_id/sessions")
+  .get(
+    (
+      request: Request<{ event_id: string; session_type_id: string }>,
+      response: Response
+    ) => {
+      return getAllSessionBySessionTypeController.handle(request, response);
+    }
+  );

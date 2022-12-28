@@ -3,6 +3,39 @@ import { client } from "../../prisma/client";
 import { ISessionRepository } from "../interfaces/session-repository";
 
 export class PrismaSessionRepository implements ISessionRepository {
+  async findAllBySessionTypeIdPaginate(data: {
+    sessionTypeId: string;
+    eventId: string;
+    page: number;
+    limit: number;
+  }): Promise<[number, SessionModel[]]> {
+    const skip = Math.abs(data.page - 1) * data.limit;
+    const sessions = await client.$transaction([
+      client.session.count({
+        where: {
+          session_type_id: data.sessionTypeId,
+          event_id: data.eventId
+        },
+      }),
+      client.session.findMany({
+        where: {
+          session_type_id: data.sessionTypeId,
+          event_id: data.eventId
+        },
+        include: {
+          session_cover: true,
+          event: true,
+          session_subscriptions: true,
+          session_tickets: true,
+          session_type: true,
+        },
+        skip,
+        take: Number(data.limit),
+      }),
+    ]);
+    return sessions;
+  }
+
   async findAllBySessionTypeId(data: {
     sessionTypeId: string;
   }): Promise<SessionModel[]> {
