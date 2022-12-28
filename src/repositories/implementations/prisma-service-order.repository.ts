@@ -3,6 +3,23 @@ import { client } from "../../prisma/client";
 import { IServiceOrderRepository } from "../interfaces/service-order-repository";
 
 export class PrismaServiceOrderRepository implements IServiceOrderRepository {
+  async findById(params: {
+    service_order_id: string;
+  }): Promise<ServiceOrderModel> {
+    const serviceOrder = await client.serviceOrder.findFirst({
+      where: {
+        id: params.service_order_id,
+      },
+      include: {
+        session_ticket_service_order: true,
+        ticket_service_order: true,
+        transactions: true,
+        user: true,
+      },
+    });
+    return serviceOrder;
+  }
+
   async update(data: ServiceOrderModel): Promise<ServiceOrderModel> {
     const serviceOrder = await client.serviceOrder.update({
       data: {

@@ -160,6 +160,15 @@ export function invokeRolesPolicies() {
         },
       ],
     },
+    {
+      roles: [POLICY_ROLES.VIEW_SERVICE_ORDER],
+      allows: [
+        {
+          resources: "/api/service-orders/:service_order_id",
+          permissions: ["get"],
+        },
+      ],
+    },
   ]);
 }
 

@@ -36,6 +36,7 @@ export class PrismaTicketRepository implements ITicketRepository {
     ]);
     return tickets;
   }
+
   async findById(ticket_id: string): Promise<TicketModel> {
     const ticket = await client.ticket.findFirst({
       where: {
@@ -47,6 +48,7 @@ export class PrismaTicketRepository implements ITicketRepository {
             quote: true,
           },
         },
+        ticket_service_orders: true,
       },
     });
     return ticket;

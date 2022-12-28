@@ -11,9 +11,10 @@ import { TicketServiceOrderModel } from "../../../models/ticket-service-order.mo
 import { ServiceOrderModel } from "../../../models/service-order.model";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
-import { addMinutes, format, getUnixTime } from "date-fns";
+import { addMinutes, getUnixTime } from "date-fns";
+import { IGetServiceOrderResponse } from "./get-service-order.dto";
 
-export class CreateTicketServiceOrderController {
+export class GetServiceOrderController {
   constructor(
     private ticketRepository: ITicketRepository,
     private subscriptionRepository: ISubscriptionRepository,
@@ -24,10 +25,25 @@ export class CreateTicketServiceOrderController {
   async handle(request: RequestWithAuth, response: Response) {
     try {
       // recebe o body da requisição
-      const { ticket_id } = request.body;
+      const { service_order_id } = request.params;
+
+      const serviceOrder = await this.serviceOrderRepository.findById({
+        service_order_id,
+      });
+
+      if (!serviceOrder) {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Essa ordem de serviço não existe",
+          HttpStatus.NOT_FOUND
+        );
+      }
 
       // busca um ticket pelo id
-      const ticket = await this.ticketRepository.findById(ticket_id);
+      const ticket = await this.ticketRepository.findById(
+        serviceOrder.ticket_service_order.ticket_id
+      );
 
       // se o ticket não existir, retorna um erro
       if (!ticket) {
@@ -165,61 +181,62 @@ export class CreateTicketServiceOrderController {
           status: "open",
         });
 
-      if (existsTicketServiceOrder) {
-        const now = new Date();
-        const expiresIn = new Date(
-          existsTicketServiceOrder.service_order.expires_in * 1000
+      if (!existsTicketServiceOrder) {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Essa ordem de serviço para o ingresso não existe",
+          HttpStatus.NOT_FOUND
         );
-
-        if (expiresIn > now) {
-          return sendSuccessful(
-            response,
-            existsTicketServiceOrder,
-            HttpStatus.CREATED
-          );
-        } else {
-          await this.serviceOrderRepository.update({
-            ...existsTicketServiceOrder.service_order,
-            status: "closed",
-          });
-        }
       }
-      // // calcular o preço final do ticket (incluindo a taxa)
-      const fee = calculateTicketFee({
-        ticket_price_type: ticket.ticket_price_type,
-        value: ticket.value,
-      });
 
-      const ticketValue = calculateTicketValue({
-        fee,
-        includeFee: ticket.include_fee,
-        value: ticket.value,
-      });
-      
-      const expires_in = getUnixTime(addMinutes(new Date(), 10));
-
-      const newServiceOrder = new ServiceOrderModel({
-        amount_total: ticketValue,
-        status: "open",
-        user_id: request.user.uid,
-        type: "event",
-        expires_in,
-      });
-
-      const serviceOrder = await this.serviceOrderRepository.save(
-        newServiceOrder
+      const expiresIn = new Date(
+        existsTicketServiceOrder.service_order.expires_in * 1000
       );
 
-      const newTicketServiceOrder = new TicketServiceOrderModel({
-        service_order_id: serviceOrder.id,
-        ticket_id: ticket.id,
-      });
+      if (expiresIn > now) {
+        // // calcular o preço final do ticket (incluindo a taxa)
+        const fee = calculateTicketFee({
+          ticket_price_type: ticket.ticket_price_type,
+          value: ticket.value,
+        });
 
-      const ticketServiceOrder = await this.ticketServiceOrderRepository.save(
-        newTicketServiceOrder
-      );
+        const ticketValue = calculateTicketValue({
+          fee,
+          includeFee: ticket.include_fee,
+          value: ticket.value,
+        });
 
-      return sendSuccessful(response, ticketServiceOrder, HttpStatus.CREATED);
+        const serviceOrderResponse: IGetServiceOrderResponse = {
+          expires_in: existsTicketServiceOrder.service_order.expires_in,
+          fee: ticket.include_fee ? fee : 0,
+          quantity: 1,
+          service_order_id: serviceOrder.id,
+          subtotal: ticket.value,
+          ticket: {
+            event_title: event.title,
+            title: ticket.category_title,
+          },
+          total:ticketValue,
+        };
+
+        return sendSuccessful(
+          response,
+          serviceOrderResponse,
+          HttpStatus.CREATED
+        );
+      } else {
+        await this.serviceOrderRepository.update({
+          ...existsTicketServiceOrder.service_order,
+          status: "closed",
+        });
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "O tempo que tinha para fazer a compra acabou",
+          HttpStatus.NOT_FOUND
+        );
+      }
     } catch (error) {
       return sendError(
         response,
