@@ -4,12 +4,17 @@ import { TransactionModel } from "./transaction.model";
 export class PaymentMethodModel {
   public readonly id: string;
   public payment_form:
-    | "open"
-    | "processing"
-    | "settled"
-    | "closed"
-    | "canceled";
+    | "credit"
+    | "debit"
+    | "check"
+    | "bank_slip"
+    | "cash"
+    | "deposit"
+    | "wallet"
+    | "transfer"
+    | "pix";
   public name: string;
+  public informations?: string;
   public fee: number;
   public installments: number;
   public status: boolean;

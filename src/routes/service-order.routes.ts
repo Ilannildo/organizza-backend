@@ -1,5 +1,6 @@
 import { Response, Router } from "express";
 import { createServiceOrderController } from "../usecases/service-order/create-ticket-service-order";
+import { getPaymentMethodController } from "../usecases/service-order/get-payment-method";
 import { getServiceOrderController } from "../usecases/service-order/get-service-order";
 import * as policies from "../utils/policies/v1/users.policy";
 import { RequestWithAuth } from "../utils/types";
@@ -28,3 +29,11 @@ serviceOrderRoutes
       return getServiceOrderController.handle(request, response);
     }
   );
+
+// busca de ordem de serviço
+serviceOrderRoutes.route("/:service_order_id/payment-methods").get(
+  // eventsValidations.register,
+  (request: RequestWithAuth, response: Response) => {
+    return getPaymentMethodController.handle(request, response);
+  }
+);

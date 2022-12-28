@@ -398,6 +398,7 @@ model PaymentMethod {
   id           String            @id @default(uuid())
   payment_form PaymentMethodType
   name         String
+  informations String?
   fee          Float
   installments Int
   status       Boolean           @default(false)
@@ -507,6 +508,7 @@ enum PaymentMethodType {
   deposit // deposito
   wallet // carteira
   transfer // trasnferencia
+  pix
 }
 
 enum TransactionStatus {
