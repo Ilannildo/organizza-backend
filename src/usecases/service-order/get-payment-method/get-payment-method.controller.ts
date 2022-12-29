@@ -5,6 +5,7 @@ import { HttpStatus } from "../../../utils/httpStatus";
 import { Codes } from "../../../utils/codes";
 import { IPaymentMethodRepository } from "../../../repositories/interfaces/payment-method-repository";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
+import { IGetPaymentMethodResponse } from "./get-payment-method.dto";
 
 export class GetPaymentMethodController {
   constructor(
@@ -31,7 +32,17 @@ export class GetPaymentMethodController {
 
       const paymentMethods = await this.paymentMethodRepository.findAll();
 
-      return sendSuccessful(response, paymentMethods, HttpStatus.OK);
+      const paymentResponse: IGetPaymentMethodResponse[] = [];
+      paymentMethods.forEach((paymentMethod) => {
+        paymentResponse.push({
+          information: paymentMethod.informations,
+          payment_id: paymentMethod.id,
+          payment_title: paymentMethod.name,
+          payment_type: paymentMethod.payment_form,
+        });
+      });
+
+      return sendSuccessful(response, paymentResponse, HttpStatus.OK);
     } catch (error) {
       return sendError(
         response,

@@ -232,7 +232,7 @@ export class GetServiceOrderController {
         });
         return sendError(
           response,
-          Codes.ENTITY__NOT_FOUND,
+          Codes.EXPIRED_TIME,
           "O tempo que tinha para fazer a compra acabou",
           HttpStatus.NOT_FOUND
         );

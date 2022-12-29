@@ -9,12 +9,14 @@ import { IGetAllEventPageTicketsResponse } from "./get-all-event-page-tickets.dt
 import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
 import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
 import { format } from "date-fns";
+import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
 
 export class GetAllEventPageTicketController {
   constructor(
     private eventRepository: IEventsRepository,
     private ticketRepository: ITicketRepository,
-    private subscriptionRepository: ISubscriptionRepository
+    private subscriptionRepository: ISubscriptionRepository,
+    private ticketServiceOrderRepository: ITicketServiceOrderRepository
   ) {}
 
   async handle(request: Request, response: Response) {
@@ -40,6 +42,7 @@ export class GetAllEventPageTicketController {
       const ticketsResponse: IGetAllEventPageTicketsResponse[] = [];
       for (const ticket of alltickets) {
         // buscar quantas inscrições para o ticket estão com status completo
+        let status = "Comprar ingresso";
         let available = true;
         const subscriptions = await this.subscriptionRepository.findByTicketId(
           ticket.id
@@ -51,7 +54,20 @@ export class GetAllEventPageTicketController {
 
         if (completedSubscriptions.length === ticket.participant_limit) {
           available = false;
+          status = "Esgotado";
         }
+
+        const existsTicketServiceOrder =
+          await this.ticketServiceOrderRepository.findAllByTicketId({
+            ticketId: ticket.id,
+            status: "open",
+          });
+
+        if (existsTicketServiceOrder.length === ticket.participant_limit) {
+          available = false;
+          status = "Esgotado";
+        }
+
         // calcular o preço final do ticket (incluindo a taxa)
         const fee = calculateTicketFee({
           ticket_price_type: ticket.ticket_price_type,
@@ -65,7 +81,6 @@ export class GetAllEventPageTicketController {
         });
 
         const now = new Date();
-        let status = "Comprar ingresso";
         if (
           ticket.start_date > now &&
           ticket.start_time.getTime() > now.getTime()

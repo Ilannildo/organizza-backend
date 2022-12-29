@@ -5,6 +5,27 @@ import { ITicketServiceOrderRepository } from "../interfaces/ticket-service-orde
 export class PrismaTicketServiceOrderRepository
   implements ITicketServiceOrderRepository
 {
+  async findAllByTicketId({
+    status,
+    ticketId,
+  }: {
+    ticketId: string;
+    status: "processing" | "open" | "settled" | "closed" | "canceled";
+  }): Promise<TicketServiceOrderModel[]> {
+    const serviceOrder = await client.ticketServiceOrder.findMany({
+      where: {
+        ticket_id: ticketId,
+        service_order: {
+          status,
+        },
+      },
+      include: {
+        service_order: true,
+      },
+    });
+
+    return serviceOrder;
+  }
   async findByUserIdTicketId({
     ticketId,
     userId,

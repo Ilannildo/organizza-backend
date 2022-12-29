@@ -7,4 +7,8 @@ export interface ITicketServiceOrderRepository {
     userId: string;
     status: "open" | "processing" | "settled" | "closed" | "canceled";
   }): Promise<TicketServiceOrderModel>;
+  findAllByTicketId(data: {
+    ticketId: string;
+    status: "open" | "processing" | "settled" | "closed" | "canceled";
+  }): Promise<TicketServiceOrderModel[]>;
 }
