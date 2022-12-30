@@ -196,7 +196,7 @@ export class CreateTicketServiceOrderController {
         value: ticket.value,
       });
       
-      const expires_in = getUnixTime(addMinutes(new Date(), 10));
+      const expires_in = getUnixTime(addMinutes(new Date(), 30)); // add 10 minutes
 
       const newServiceOrder = new ServiceOrderModel({
         amount_total: ticketValue,
