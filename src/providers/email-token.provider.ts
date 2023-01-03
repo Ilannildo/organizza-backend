@@ -64,7 +64,7 @@ export class EmailTokenProvider {
     }
 
     const created = await this.emailTokenRepository.save(data);
-    console.log("Criando novo email token");
+
     const sending = await this.sendEmailConfimationProvider.execute({
       email: created.user.email,
       email_token: created,
@@ -72,7 +72,7 @@ export class EmailTokenProvider {
     });
     if (!sending) {
       throw new Error(
-        "Ops! Ocorreu um erro inesperado ao enviar o email de confimarção. Tente novamente!"
+        "Ocorreu um erro inesperado ao enviar o email de confirmação. Tente fazer login!"
       );
     }
 

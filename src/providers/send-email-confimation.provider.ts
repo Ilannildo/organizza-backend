@@ -19,6 +19,7 @@ export class SendEmailConfimationProvider {
         process.env.NODE_ENV === "development"
           ? process.env.SITE_URL_DEV
           : process.env.SITE_URL_PROD;
+          
       const link = `${site_url}/confirmar-cadastro/${confirmationCode}}`;
       await nodeMailerTransporter.sendMail({
         from: "contato@organizza.online",
