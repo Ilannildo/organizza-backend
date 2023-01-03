@@ -1,6 +1,7 @@
 import { Response, Router } from "express";
 import { createServiceOrderController } from "../usecases/service-order/create-ticket-service-order";
 import { creditCardValidationBrandController } from "../usecases/service-order/credit-card-validation-brand";
+import { getInstallmentsController } from "../usecases/service-order/get-installments";
 import { getPaymentMethodController } from "../usecases/service-order/get-payment-method";
 import { getServiceOrderController } from "../usecases/service-order/get-service-order";
 import * as policies from "../utils/policies/v1/users.policy";
@@ -44,5 +45,12 @@ serviceOrderRoutes.route("/payments/:payment_method_id/brand").post(
   // eventsValidations.register,
   (request: RequestWithAuth, response: Response) => {
     return creditCardValidationBrandController.handle(request, response);
+  }
+);
+
+serviceOrderRoutes.route("/:service_order_id/payments/:payment_method_id/installments").get(
+  // eventsValidations.register,
+  (request: RequestWithAuth, response: Response) => {
+    return getInstallmentsController.handle(request, response);
   }
 );

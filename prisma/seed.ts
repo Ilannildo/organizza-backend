@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { setupCities } from "../setup/cities";
-import { setupEventTypes } from "../setup/event_types";
-import { setupMainSubjects } from "../setup/main_subjects";
+import { setupEventTypes } from "../setup/event-types";
+import { setupInstallments } from "../setup/installments";
+import { setupMainSubjects } from "../setup/main-subjects";
 import { setupRoles } from "../setup/roles";
 import { setupSessionTypes } from "../setup/session-types";
 
@@ -18,6 +19,8 @@ async function main() {
   await setupCities();
 
   await setupSessionTypes();
+
+  await setupInstallments();
 }
 
 main()
