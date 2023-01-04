@@ -158,6 +158,10 @@ export function invokeRolesPolicies() {
           resources: "/api/service-orders/tickets",
           permissions: ["post"],
         },
+        {
+          resources: "/api/service-orders/:service_order_id/pay",
+          permissions: ["post"],
+        },
       ],
     },
     {

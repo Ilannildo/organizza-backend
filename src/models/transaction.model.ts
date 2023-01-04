@@ -6,7 +6,7 @@ export class TransactionModel {
   public readonly id: string;
   public payment_method_id: string;
   public service_order_id: string;
-  public transaction_id: string;
+  public transaction_id?: string;
   public processed_response?: string;
   public customer_email: string;
   public customer_name: string;
