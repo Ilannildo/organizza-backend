@@ -1,15 +1,17 @@
-import { PaymentMethodModel } from "../models/payment-method.model";
-import { ServiceOrderModel } from "../models/service-order.model";
-import { TicketServiceOrderModel } from "../models/ticket-service-order.model";
-import { TicketModel } from "../models/ticket.model";
-import { TransactionModel } from "../models/transaction.model";
 import { ITransactionRepository } from "../repositories/interfaces/transaction-repository";
 import { IPaymentGatewayService } from "../services/interfaces/payment-gateway.service";
+import { PaymentMethodModel } from "../models/payment-method.model";
+import { ServiceOrderModel } from "../models/service-order.model";
+import { TransactionModel } from "../models/transaction.model";
+import { RecipientModel } from "../models/recipient.model";
+import { TicketModel } from "../models/ticket.model";
+import { IUsersRepository } from "../repositories/interfaces/user-repository";
 
 interface ICreateTransactionRepository {
   service_order: ServiceOrderModel;
   payment_method: PaymentMethodModel;
   ticket: TicketModel;
+  recipient: RecipientModel;
   installments: number;
   customer: {
     name: string;
@@ -37,11 +39,13 @@ interface ICreateTransactionRepository {
 export class CreateTransactionProvider {
   constructor(
     private transactionRepository: ITransactionRepository,
-    private paymentGatewayService: IPaymentGatewayService
+    private paymentGatewayService: IPaymentGatewayService,
+    private userRespository: IUsersRepository
   ) {}
 
   async execute({
     customer,
+    recipient,
     payment_method,
     service_order,
     billing,
@@ -68,6 +72,16 @@ export class CreateTransactionProvider {
     });
     const transaction = await this.transactionRepository.save(newTransaction);
 
+    const adminRecipient = await this.userRespository.findByEmail(
+      "adm.organizza@gmail.com"
+    );
+
+    if (!adminRecipient) {
+      throw new Error(
+        "Não foi possível realizar o pagamento. Tente novamente!"
+      );
+    }
+
     const order = await this.paymentGatewayService.createOrder({
       customer,
       payment_method,
@@ -77,6 +91,8 @@ export class CreateTransactionProvider {
       transaction,
       credit_card,
       ticket,
+      recipient,
+      admin_recipient: adminRecipient.recipient,
     });
 
     return order;

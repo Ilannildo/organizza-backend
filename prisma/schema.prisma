@@ -29,8 +29,25 @@ model User {
   subscriptions         Subscription[]
   session_subscriptions SessionSubscription[]
   service_orders        ServiceOrder[]
+  recipient             Recipient?
 
   @@map("users")
+}
+
+model Recipient {
+  id                    String                @id @default(uuid())
+  user_id               String                @unique
+  external_recipient_id String
+  document              String
+  document_type         RecipientDocumentType
+  status                RecipientStatus
+  account_registered_at DateTime?
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  user                  User                  @relation(fields: [user_id], references: [uid])
+
+  @@map("recipients")
 }
 
 model Role {
@@ -422,19 +439,6 @@ model Installments {
   @@map("installments")
 }
 
-// Todas as bandeiras	1x	4,49%
-// Todas as bandeiras	2x	6,47%
-// Todas as bandeiras	3x	7,46%
-// Todas as bandeiras	4x	8,45%
-// Todas as bandeiras	5x	9,44%
-// Todas as bandeiras	6x	10,43%
-// Todas as bandeiras	7x	11,42%
-// Todas as bandeiras	8x	12,41%
-// Todas as bandeiras	9x	13,40%
-// Todas as bandeiras	10x	14,39%
-// Todas as bandeiras	11x	15,38%
-// Todas as bandeiras	12x	16,37%
-
 model Subscription {
   id                      String             @id @default(uuid())
   user_id                 String
@@ -556,4 +560,16 @@ enum TransactionOperation {
 enum TransactionType {
   input // entrada
   output // saida
+}
+
+enum RecipientDocumentType {
+  cpf // entrada
+  cnpj // saida
+}
+
+enum RecipientStatus {
+  pending // pendente
+  refused // recusada
+  completed // completa
+  canceled // cancelada
 }

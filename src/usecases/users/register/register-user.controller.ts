@@ -49,6 +49,18 @@ export class RegisterUserController {
           delete_event: false,
           edit_event: true,
           view_event: true,
+          delete_service_order: false,
+          delete_session: false,
+          delete_ticket: true,
+          edit_service_order: true,
+          edit_session: true,
+          edit_ticket: true,
+          register_service_order: true,
+          register_session: true,
+          register_ticket: true,
+          view_service_order: true,
+          view_session: true,
+          view_ticket: true,
         });
         defaultRole = await this.rolesRepository.save(newDefaultRole);
       }

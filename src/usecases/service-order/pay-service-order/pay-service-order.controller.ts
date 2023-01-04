@@ -10,6 +10,7 @@ import { IServiceOrderRepository } from "../../../repositories/interfaces/servic
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
 import { IPaymentMethodRepository } from "../../../repositories/interfaces/payment-method-repository";
 import { CreateTransactionProvider } from "../../../providers/create-transaction.provider";
+import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 
 export class PayServiceOrderController {
   constructor(
@@ -19,7 +20,8 @@ export class PayServiceOrderController {
     private serviceOrderRepository: IServiceOrderRepository,
     private ticketServiceOrderRepository: ITicketServiceOrderRepository,
     private paymentMethodRepository: IPaymentMethodRepository,
-    private createTransactionProvider: CreateTransactionProvider
+    private createTransactionProvider: CreateTransactionProvider,
+    private userRespository: IUsersRepository
   ) {}
   async handle(request: RequestWithAuth, response: Response) {
     try {
@@ -235,6 +237,37 @@ export class PayServiceOrderController {
         );
       }
 
+      const userRecipient = await this.userRespository.findById(
+        event.created_by_user_id
+      );
+
+      if (!userRecipient) {
+        return sendError(
+          response,
+          Codes.USER__NOT_FOUND,
+          "Não conseguimos encontrar o organizador do evento. Tente novamente!",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (!userRecipient.recipient) {
+        return sendError(
+          response,
+          Codes.USER__NOT_FOUND,
+          "Esse evento não pode receber inscrições pagas. Contate o organizador!",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (userRecipient.recipient.status !== "completed") {
+        return sendError(
+          response,
+          Codes.USER__NOT_FOUND,
+          "Esse evento não pode receber inscrições pagas. Contate o organizador!",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
       const transaction = await this.createTransactionProvider.execute({
         billing: {
           address: billing_address,
@@ -261,6 +294,7 @@ export class PayServiceOrderController {
           owner_name: credit_card_owner_name,
         },
         ticket,
+        recipient: userRecipient.recipient,
       });
 
       if (!transaction) {

@@ -6,6 +6,7 @@ import { PrismaSubscriptionRepository } from "../../../repositories/implementati
 import { PrismaTicketServiceOrderRepository } from "../../../repositories/implementations/prisma-ticket-service-order.repository";
 import { PrismaTicketRepository } from "../../../repositories/implementations/prisma-ticket.repository";
 import { PrismaTransactionRepository } from "../../../repositories/implementations/prisma-transaction.repository";
+import { PrismaUserRepository } from "../../../repositories/implementations/prisma-user.respository";
 import { PagarmeGateway } from "../../../services/implementation/pagarme-gateway.service";
 import { PayServiceOrderController } from "./pay-service-order.controller";
 
@@ -18,9 +19,12 @@ const prismaTicketServiceOrderRepository =
 const prismaPaymentMethodRepository = new PrismaPaymentMethodRepository();
 const prismaTransactionRepository = new PrismaTransactionRepository();
 const pagarmeGatewayService = new PagarmeGateway();
+const prismaUserRepository = new PrismaUserRepository();
+
 const createTransactionProvider = new CreateTransactionProvider(
   prismaTransactionRepository,
-  pagarmeGatewayService
+  pagarmeGatewayService,
+  prismaUserRepository
 );
 
 export const payServiceOrderController = new PayServiceOrderController(
@@ -30,5 +34,6 @@ export const payServiceOrderController = new PayServiceOrderController(
   prismaServiceOrderRepository,
   prismaTicketServiceOrderRepository,
   prismaPaymentMethodRepository,
-  createTransactionProvider
+  createTransactionProvider,
+  prismaUserRepository
 );

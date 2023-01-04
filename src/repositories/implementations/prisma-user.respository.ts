@@ -16,6 +16,7 @@ export class PrismaUserRepository implements IUsersRepository {
             address: true,
           },
         },
+        recipient: true,
       },
     });
 
@@ -34,6 +35,7 @@ export class PrismaUserRepository implements IUsersRepository {
             address: true,
           },
         },
+        recipient: true,
       },
     });
 
@@ -51,6 +53,7 @@ export class PrismaUserRepository implements IUsersRepository {
             address: true,
           },
         },
+        recipient: true,
       },
     });
 
@@ -69,6 +72,7 @@ export class PrismaUserRepository implements IUsersRepository {
             address: true,
           },
         },
+        recipient: true,
       },
     });
     return userPhone;

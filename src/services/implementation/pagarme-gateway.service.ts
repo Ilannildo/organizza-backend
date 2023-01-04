@@ -1,6 +1,5 @@
 import axios from "axios";
-import { parsePhoneNumber } from "libphonenumber-js";
-import { calculateTicketFee, calculateTicketValue } from "../../utils/roles";
+import { calculateTicketFee } from "../../utils/roles";
 import {
   IPaymentGatewayServiceCreateOrderRequest,
   IPaymentGatewayServiceCreateOrderResponse,
@@ -17,8 +16,7 @@ const pagarmeApi = axios.create({
   headers: {
     accept: "application/json",
     "content-type": "application/json",
-    Authorization:
-      "Basic " + Buffer.from("sk_test_ZKB51o3unh3vXWMD:").toString("base64"),
+    Authorization: "Basic " + Buffer.from(`${API_KEY}:`).toString("base64"),
   },
 });
 
@@ -26,44 +24,28 @@ export class PagarmeGateway implements IPaymentGatewayService {
   async createOrder({
     billing,
     customer,
+    recipient,
     installments,
     service_order,
     transaction,
     credit_card,
     ticket,
     payment_method,
+    admin_recipient,
   }: IPaymentGatewayServiceCreateOrderRequest) {
     try {
-      const customerParams = {
-        customer: {
-          phones: {
-            mobile_phone: {
-              country_code: "55",
-              area_code: customer.phone.slice(0, 2),
-              number: customer.phone,
-            },
-          },
-          code: customer.email,
-          name: customer.name,
-          email: customer.email,
-          type: "individual",
-          document: customer.document,
-        },
-      };
-
       const fee = calculateTicketFee({
         ticket_price_type: ticket.ticket_price_type,
         value: ticket.value,
       });
 
-      const ticketValue = calculateTicketValue({
-        fee,
-        includeFee: ticket.include_fee,
-        value: ticket.value,
-      });
+      const splitPlatformAmount = ticket.include_fee
+        ? (service_order.amount_total - ticket.value) * 100
+        : (service_order.amount_total + fee - ticket.value) * 100;
 
-      console.log("fee", fee);
-      console.log("ticketValue", ticketValue);
+      const splitRecipientAmount = ticket.include_fee
+        ? ticket.value * 100
+        : (ticket.value - fee) * 100;
 
       const creditCardParams = {
         credit_card: {
@@ -91,23 +73,19 @@ export class PagarmeGateway implements IPaymentGatewayService {
               charge_remainder_fee: true,
               liable: true,
             },
-            amount: ticket.include_fee
-              ? (service_order.amount_total - ticket.value) * 100
-              : (service_order.amount_total + fee - ticket.value) * 100,
-            recipient_id: "rp_BpKaGE0uYkfr8zqJ", // organizza eventos
+            amount: splitPlatformAmount,
+            recipient_id: admin_recipient.external_recipient_id, // organizza eventos
             type: "flat",
           },
           {
             options: {
               charge_processing_fee: false,
               charge_remainder_fee: false,
-              liable: !ticket.include_fee,
+              liable: false,
             },
-            amount: ticket.include_fee
-              ? ticket.value * 100
-              : (ticket.value - fee) * 100,
+            amount: splitRecipientAmount,
             type: "flat",
-            recipient_id: "rp_XeO8VGmsdselzLAK", // recebedor
+            recipient_id: recipient.external_recipient_id, // recebedor
           },
         ],
         payment_method: "credit_card",
@@ -128,7 +106,20 @@ export class PagarmeGateway implements IPaymentGatewayService {
             code: service_order.ticket_service_order.ticket_id,
           },
         ],
-        ...customerParams,
+        customer: {
+          phones: {
+            mobile_phone: {
+              country_code: "55",
+              area_code: customer.phone.slice(0, 2),
+              number: customer.phone,
+            },
+          },
+          code: customer.email,
+          name: customer.name,
+          email: customer.email,
+          type: "individual",
+          document: customer.document,
+        },
         payments: [paymentParams],
       };
 
@@ -136,7 +127,6 @@ export class PagarmeGateway implements IPaymentGatewayService {
       console.log("Teste pagar me", response.data);
 
       return response.data;
-      //   return transactionParams;
     } catch (error) {
       console.log("Error", error.response);
       console.log("Error", error.response.data);

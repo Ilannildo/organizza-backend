@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { setupadmin } from "../setup/admin";
 import { setupCities } from "../setup/cities";
 import { setupEventTypes } from "../setup/event-types";
 import { setupInstallments } from "../setup/installments";
@@ -9,7 +10,6 @@ import { setupSessionTypes } from "../setup/session-types";
 const prisma = new PrismaClient();
 
 async function main() {
-  // create many roles
   await setupRoles();
 
   await setupEventTypes();
@@ -21,6 +21,8 @@ async function main() {
   await setupSessionTypes();
 
   await setupInstallments();
+
+  await setupadmin();
 }
 
 main()

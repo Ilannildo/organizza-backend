@@ -1,12 +1,15 @@
 import { PaymentMethodModel } from "../../models/payment-method.model";
 import { ServiceOrderModel } from "../../models/service-order.model";
-import { TicketModel } from "../../models/ticket.model";
 import { TransactionModel } from "../../models/transaction.model";
+import { RecipientModel } from "../../models/recipient.model";
+import { TicketModel } from "../../models/ticket.model";
 
 export interface IPaymentGatewayServiceCreateOrderRequest {
   transaction: TransactionModel;
   payment_method: PaymentMethodModel;
   service_order: ServiceOrderModel;
+  recipient: RecipientModel;
+  admin_recipient: RecipientModel;
   ticket: TicketModel;
   installments: number;
   credit_card?: {
