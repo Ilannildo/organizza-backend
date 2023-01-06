@@ -1,6 +1,11 @@
 import { v4 as uuid } from "uuid";
-import { EmailTokenModel } from "./email_token.model";
+import { EmailTokenModel } from "./email-token.model";
+import { EventModel } from "./event.model";
+import { RecipientModel } from "./recipient.model";
 import { RoleModel } from "./roles.model";
+import { ServiceOrderModel } from "./service-order.model";
+import { SessionSubscriptionModel } from "./session-subscription.model";
+import { SubscriptionModel } from "./subscription.model";
 
 export class UserModel {
   public readonly uid: string;
@@ -17,10 +22,14 @@ export class UserModel {
   public created_at?: Date;
   public updated_at?: Date;
   public deleted_at?: Date;
-
   public role?: RoleModel;
   public email_token?: EmailTokenModel;
-
+  public events?: EventModel[];
+  public subscriptions?: SubscriptionModel[];
+  public session_subscriptions?: SessionSubscriptionModel[];
+  public service_orders?: ServiceOrderModel[];
+  public recipient?: RecipientModel;
+  
   constructor(props: Omit<UserModel, "uid">, uid?: string) {
     Object.assign(this, props);
 

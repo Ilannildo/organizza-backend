@@ -1,22 +1,22 @@
-version: '3'
+version: '3.5'
 
 services:
-  db:
-    platform: linux/x86_64
-    image: mysql:5.7.32
-    command: --innodb_use_native_aio=0 --default-authentication-plugin=mysql_native_password
-    restart: unless-stopped
-    volumes:
-      - organizza-database:/var/lib/mysql
-    ports:
-      - '3306:3306'
+  postgres:
+    container_name: postgres_container
+    image: postgres
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=organizzadev
-  adminer:
-    image: adminer
-    restart: always
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/data/postgres
     ports:
-      - 8080:8080
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+networks:
+  postgres:
+    driver: bridge
 volumes:
-  organizza-database:
+    postgres:

@@ -20,7 +20,7 @@ export function invokeRolesPolicies() {
       roles: [POLICY_ROLES.ANY],
       allows: [
         {
-          resources: "/api/me",
+          resources: "/api/users/account",
           permissions: ["get"],
         },
       ],
@@ -89,6 +89,33 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.REGISTER_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id/tickets",
+          permissions: ["post"],
+        },
+      ],
+    },
+    {
+      roles: [POLICY_ROLES.VIEW_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id/tickets",
+          permissions: ["get"],
+        },
+      ],
+    },
+    {
+      roles: [POLICY_ROLES.VIEW_EVENT],
+      allows: [
+        {
+          resources: "/api/events/:event_id/general-informations",
+          permissions: ["get"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.DELETE_EVENT],
       allows: [
         {
@@ -124,6 +151,28 @@ export function invokeRolesPolicies() {
         },
       ],
     },
+    {
+      roles: [POLICY_ROLES.REGISTER_SERVICE_ORDER],
+      allows: [
+        {
+          resources: "/api/service-orders/tickets",
+          permissions: ["post"],
+        },
+        {
+          resources: "/api/service-orders/:service_order_id/pay",
+          permissions: ["post"],
+        },
+      ],
+    },
+    {
+      roles: [POLICY_ROLES.VIEW_SERVICE_ORDER],
+      allows: [
+        {
+          resources: "/api/service-orders/:service_order_id",
+          permissions: ["get"],
+        },
+      ],
+    },
   ]);
 }
 
@@ -140,9 +189,12 @@ export function isAllowed(
     return next();
   }
 
+  const path = `${request.baseUrl}${request.route.path}`;
+  console.log("LOG AUTH PATH >>>", path);
+
   acl.areAnyRolesAllowed(
     roles,
-    request.route.path,
+    path,
     request.method.toLowerCase(),
     (err, isAllowed) => {
       if (err) {

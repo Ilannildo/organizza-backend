@@ -1,7 +1,7 @@
 import { app } from "./app";
 import chalk from "chalk";
 
-const DEFAULT_PORT = 800;
+const DEFAULT_PORT = 8000;
 
 app.listen(process.env.PORT || DEFAULT_PORT, () => {
   const server = `${

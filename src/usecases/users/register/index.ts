@@ -1,20 +1,20 @@
-import { EmailTokenProvider } from "../../../providers/EmailTokenProvider";
-import { SendEmailConfimation } from "../../../providers/SendEmailConfimation";
-import { EmailTokenRepository } from "../../../repositories/implementations/EmailTokenRepository";
-import { RoleRepositroy } from "../../../repositories/implementations/RoleRepository";
-import { UsersRepository } from "../../../repositories/implementations/UsersRespository";
-import { RegisterUserController } from "./RegisterUserController";
+import { EmailTokenProvider } from "../../../providers/email-token.provider";
+import { SendEmailConfimationProvider } from "../../../providers/send-email-confimation.provider";
+import { PrismaEmailTokenRepository } from "../../../repositories/implementations/prisma-email-token.repository";
+import { PrismaRoleRepositroy } from "../../../repositories/implementations/prisma-role.repository";
+import { PrismaUserRepository } from "../../../repositories/implementations/prisma-user.respository";
+import { RegisterUserController } from "./register-user.controller";
 
-const usersRepository = new UsersRepository();
-const rolesRepository = new RoleRepositroy();
-const sendEmailConfimation = new SendEmailConfimation();
-const emailTokenRepository = new EmailTokenRepository();
+const prismaUserRepository = new PrismaUserRepository();
+const prismaRoleRepositroy = new PrismaRoleRepositroy();
+const sendEmailConfimationProvider = new SendEmailConfimationProvider();
+const prismaEmailTokenRepository = new PrismaEmailTokenRepository();
 const emailTokenProvider = new EmailTokenProvider(
-  emailTokenRepository,
-  sendEmailConfimation
+  prismaEmailTokenRepository,
+  sendEmailConfimationProvider
 );
 export const registerUserController = new RegisterUserController(
-  usersRepository,
-  rolesRepository,
+  prismaUserRepository,
+  prismaRoleRepositroy,
   emailTokenProvider
 );

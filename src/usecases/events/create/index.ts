@@ -1,5 +1,7 @@
-import { EventRepository } from "../../../repositories/implementations/EventsRepository";
-import { CreateEventController } from "./CreateEventController";
+import { PrismaEventRepository } from "../../../repositories/implementations/prisma-event.repository";
+import { CreateEventController } from "./create-event.controller";
 
-const eventRepository = new EventRepository();
-export const createEventController = new CreateEventController(eventRepository);
+const prismaEventRepository = new PrismaEventRepository();
+export const createEventController = new CreateEventController(
+  prismaEventRepository
+);
