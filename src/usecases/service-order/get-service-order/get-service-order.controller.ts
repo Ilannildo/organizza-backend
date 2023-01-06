@@ -69,7 +69,6 @@ export class GetServiceOrderController {
       }
 
       // verifica se o evento já finalizou
-      // TODO: REMOVER ESSE COMENTÁRIO
       if (event.status === "finished") {
         return sendError(
           response,

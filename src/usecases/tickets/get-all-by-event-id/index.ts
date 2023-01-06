@@ -4,6 +4,7 @@ import { GetAllTicketByEventIdController } from "./get-all-ticket-by-event-id.co
 
 const prismaEventRepository = new PrismaEventRepository();
 const prismaTicketRepository = new PrismaTicketRepository();
+
 export const getAllTicketByEventIdController =
   new GetAllTicketByEventIdController(
     prismaEventRepository,

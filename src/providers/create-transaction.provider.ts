@@ -53,48 +53,59 @@ export class CreateTransactionProvider {
     credit_card,
     ticket,
   }: ICreateTransactionRepository) {
-    const newTransaction = new TransactionModel({
-      customer_document: customer.document,
-      customer_email: customer.email,
-      customer_name: customer.name,
-      customer_phone: customer.phone,
-      operation: "order",
-      payment_method_id: payment_method.id,
-      service_order_id: service_order.id,
-      status: "started",
-      type: "input",
-      billing_address: billing.address,
-      billing_city: billing.city,
-      billing_neighborhood: billing.neighborhood,
-      billing_number: billing.number,
-      billing_state: billing.state,
-      billing_zipcode: billing.zipcode,
-    });
-    const transaction = await this.transactionRepository.save(newTransaction);
+    try {
+      const newTransaction = new TransactionModel({
+        customer_document: customer.document,
+        customer_email: customer.email,
+        customer_name: customer.name,
+        customer_phone: customer.phone,
+        operation: "order",
+        payment_method_id: payment_method.id,
+        service_order_id: service_order.id,
+        status: "started",
+        type: "input",
+        billing_address: billing.address,
+        billing_city: billing.city,
+        billing_neighborhood: billing.neighborhood,
+        billing_number: billing.number,
+        billing_state: billing.state,
+        billing_zipcode: billing.zipcode,
+      });
+      const transaction = await this.transactionRepository.save(newTransaction);
 
-    const adminRecipient = await this.userRespository.findByEmail(
-      "adm.organizza@gmail.com"
-    );
-
-    if (!adminRecipient) {
-      throw new Error(
-        "Não foi possível realizar o pagamento. Tente novamente!"
+      const adminRecipient = await this.userRespository.findByEmail(
+        "adm.organizza@gmail.com"
       );
+
+      if (!adminRecipient) {
+        throw new Error(
+          "Não foi possível realizar o pagamento. Tente novamente!"
+        );
+      }
+
+      const order = await this.paymentGatewayService.createOrder({
+        customer,
+        payment_method,
+        service_order,
+        billing,
+        installments,
+        credit_card,
+        ticket,
+        recipient,
+        admin_recipient: adminRecipient.recipient,
+      });
+
+      const transactionUpdate = await this.transactionRepository.update({
+        ...transaction,
+        transaction_id: order.transaction_id,
+        processed_response: order.processed_response,
+        status: order.status,
+      });
+
+      delete order.processed_response;
+      return { transactionUpdate, order };
+    } catch (error) {
+      console.log("Error transaction :::", error);
     }
-
-    const order = await this.paymentGatewayService.createOrder({
-      customer,
-      payment_method,
-      service_order,
-      billing,
-      installments,
-      transaction,
-      credit_card,
-      ticket,
-      recipient,
-      admin_recipient: adminRecipient.recipient,
-    });
-
-    return order;
   }
 }

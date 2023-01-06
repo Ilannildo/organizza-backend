@@ -11,6 +11,7 @@ import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/
 import { IPaymentMethodRepository } from "../../../repositories/interfaces/payment-method-repository";
 import { CreateTransactionProvider } from "../../../providers/create-transaction.provider";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
+import { IPayServiceORderResponse } from "./pay-service-order.dto";
 
 export class PayServiceOrderController {
   constructor(
@@ -306,7 +307,29 @@ export class PayServiceOrderController {
         );
       }
 
-      return sendSuccessful(response, transaction, HttpStatus.CREATED);
+      console.log("ORDER >>>", transaction.order);
+      
+
+      if (
+        paymentMethod.payment_form === "pix" &&
+        transaction.order.status === "pending"
+      ) {
+        const paymentPixResponse: IPayServiceORderResponse = {
+          payment_method: "pix",
+          status: transaction.order.status,
+          expires_at: transaction.order.pix.expiration_date,
+          qr_code: transaction.order.pix.code,
+          qr_code_url: transaction.order.pix.qr_code_url,
+        };
+        return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
+      }
+
+      const paymentPixResponse: IPayServiceORderResponse = {
+        payment_method: paymentMethod.payment_form,
+        status: transaction.order.status,
+      };
+
+      return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
     } catch (error) {
       return sendError(
         response,

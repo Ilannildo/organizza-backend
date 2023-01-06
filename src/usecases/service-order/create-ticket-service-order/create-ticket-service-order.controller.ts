@@ -12,6 +12,7 @@ import { ServiceOrderModel } from "../../../models/service-order.model";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
 import { addMinutes, format, getUnixTime } from "date-fns";
+import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 
 export class CreateTicketServiceOrderController {
   constructor(
@@ -19,7 +20,8 @@ export class CreateTicketServiceOrderController {
     private subscriptionRepository: ISubscriptionRepository,
     private eventsRepository: IEventsRepository,
     private serviceOrderRepository: IServiceOrderRepository,
-    private ticketServiceOrderRepository: ITicketServiceOrderRepository
+    private ticketServiceOrderRepository: ITicketServiceOrderRepository,
+    private userRespository: IUsersRepository
   ) {}
   async handle(request: RequestWithAuth, response: Response) {
     try {
@@ -184,6 +186,41 @@ export class CreateTicketServiceOrderController {
           });
         }
       }
+
+      if(!ticket.ticket_price_type.is_free) {
+        // verifica se o organizador pode receber pagamentos
+        const userRecipient = await this.userRespository.findById(
+          event.created_by_user_id
+        );
+  
+        if (!userRecipient) {
+          return sendError(
+            response,
+            Codes.USER__NOT_FOUND,
+            "Não conseguimos encontrar o organizador do evento. Tente novamente!",
+            HttpStatus.NOT_FOUND
+          );
+        }
+  
+        if (!userRecipient.recipient) {
+          return sendError(
+            response,
+            Codes.USER__NOT_FOUND,
+            "Esse evento não pode receber inscrições pagas. Contate o organizador!",
+            HttpStatus.NOT_FOUND
+          );
+        }
+  
+        if (userRecipient.recipient.status !== "completed") {
+          return sendError(
+            response,
+            Codes.USER__NOT_FOUND,
+            "Esse evento não pode receber inscrições pagas. Contate o organizador!",
+            HttpStatus.NOT_FOUND
+          );
+        }
+      }
+
       // // calcular o preço final do ticket (incluindo a taxa)
       const fee = calculateTicketFee({
         ticket_price_type: ticket.ticket_price_type,
@@ -195,7 +232,7 @@ export class CreateTicketServiceOrderController {
         includeFee: ticket.include_fee,
         value: ticket.value,
       });
-      
+
       const expires_in = getUnixTime(addMinutes(new Date(), 30)); // add 10 minutes
 
       const newServiceOrder = new ServiceOrderModel({

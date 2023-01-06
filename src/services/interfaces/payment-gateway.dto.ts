@@ -1,11 +1,9 @@
 import { PaymentMethodModel } from "../../models/payment-method.model";
 import { ServiceOrderModel } from "../../models/service-order.model";
-import { TransactionModel } from "../../models/transaction.model";
 import { RecipientModel } from "../../models/recipient.model";
 import { TicketModel } from "../../models/ticket.model";
 
 export interface IPaymentGatewayServiceCreateOrderRequest {
-  transaction: TransactionModel;
   payment_method: PaymentMethodModel;
   service_order: ServiceOrderModel;
   recipient: RecipientModel;
@@ -35,4 +33,29 @@ export interface IPaymentGatewayServiceCreateOrderRequest {
   };
 }
 
-export interface IPaymentGatewayServiceCreateOrderResponse {}
+export interface IPaymentGatewayServiceCreateOrderResponse {
+  transaction_id: string;
+  status: IPaymentGatewayServiceStatusResponse;
+  processed_response: string;
+  card?: {
+    id: string;
+    first_six_digits: string;
+    last_four_digits: string;
+    brand: string;
+  };
+  pix?: {
+    code: string;
+    qr_code_url: string;
+    expiration_date: Date;
+  };
+}
+
+export type IPaymentGatewayServiceStatusResponse =
+  | "started"
+  | "processing"
+  | "pending"
+  | "approved"
+  | "refused"
+  | "refunded"
+  | "chargeback"
+  | "error";

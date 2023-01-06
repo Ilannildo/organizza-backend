@@ -6,21 +6,6 @@ import validationMiddleware from "../utils/middlewares/validations";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { client } from "../prisma/client";
 
-// payment_method_id,
-// installments,
-// customer_document,
-// customer_phone_number,
-// billing_city,
-// billing_address,
-// billing_number,
-// billing_neighborhood,
-// billing_state,
-// billing_zipcode,
-// credit_card_number,
-// credit_card_owner_name,
-// credit_card_expiration_date,
-// credit_card_cvv,
-
 // This allows you to reuse the validator
 const isValidCpf: CustomValidator = (value) => {
   const result = validateCpf(value);
@@ -40,18 +25,6 @@ const isValidPaymentType: CustomValidator = async (value) => {
       status: true,
     },
   });
-
-  // const payments = [
-  //   "credit",
-  //   "debit",
-  //   "check",
-  //   "bank_slip",
-  //   "cash",
-  //   "deposit",
-  //   "wallet",
-  //   "transfer",
-  //   "pix",
-  // ];
 
   const result = paymentMethods.find(
     (payment) => payment.payment_form === value

@@ -3,6 +3,7 @@ import { PrismaServiceOrderRepository } from "../../../repositories/implementati
 import { PrismaSubscriptionRepository } from "../../../repositories/implementations/prisma-subscription.respository";
 import { PrismaTicketServiceOrderRepository } from "../../../repositories/implementations/prisma-ticket-service-order.repository";
 import { PrismaTicketRepository } from "../../../repositories/implementations/prisma-ticket.repository";
+import { PrismaUserRepository } from "../../../repositories/implementations/prisma-user.respository";
 import { CreateTicketServiceOrderController } from "./create-ticket-service-order.controller";
 
 const prismaEventRepository = new PrismaEventRepository();
@@ -11,6 +12,7 @@ const prismaSubscriptionRepository = new PrismaSubscriptionRepository();
 const prismaServiceOrderRepository = new PrismaServiceOrderRepository();
 const prismaTicketServiceOrderRepository =
   new PrismaTicketServiceOrderRepository();
+const prismaUserRepository = new PrismaUserRepository();
 
 export const createServiceOrderController =
   new CreateTicketServiceOrderController(
@@ -18,5 +20,6 @@ export const createServiceOrderController =
     prismaSubscriptionRepository,
     prismaEventRepository,
     prismaServiceOrderRepository,
-    prismaTicketServiceOrderRepository
+    prismaTicketServiceOrderRepository,
+    prismaUserRepository
   );

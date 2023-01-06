@@ -10,13 +10,15 @@ import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
 import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
 import { format } from "date-fns";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
+import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 
 export class GetAllEventPageTicketController {
   constructor(
     private eventRepository: IEventsRepository,
     private ticketRepository: ITicketRepository,
     private subscriptionRepository: ISubscriptionRepository,
-    private ticketServiceOrderRepository: ITicketServiceOrderRepository
+    private ticketServiceOrderRepository: ITicketServiceOrderRepository,
+    private userRespository: IUsersRepository
   ) {}
 
   async handle(request: Request, response: Response) {
@@ -66,6 +68,28 @@ export class GetAllEventPageTicketController {
         if (existsTicketServiceOrder.length === ticket.participant_limit) {
           available = false;
           status = "Esgotado";
+        }
+
+        if (!ticket.ticket_price_type.is_free) {
+          // verifica se o organizador pode receber pagamentos
+          const userRecipient = await this.userRespository.findById(
+            eventAlreadyExistsById.created_by_user_id
+          );
+
+          if (!userRecipient) {
+            available = false;
+            status = "Não inicicado";
+          }
+
+          if (!userRecipient.recipient) {
+            available = false;
+            status = "Não inicicado";
+          }
+
+          if (userRecipient.recipient.status !== "completed") {
+            available = false;
+            status = "Não inicicado";
+          }
         }
 
         // calcular o preço final do ticket (incluindo a taxa)
