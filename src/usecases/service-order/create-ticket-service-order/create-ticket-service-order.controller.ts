@@ -116,13 +116,31 @@ export class CreateTicketServiceOrderController {
           eventId: ticket.event_id,
         });
 
-      if (userSubscriptions.length > 0) {
-        return sendError(
-          response,
-          Codes.CONFLICTING_CONDITION,
-          "Você já possui uma inscrição para esse evento",
-          HttpStatus.CONFLICT
-        );
+      for (const sub of userSubscriptions) {
+        if (sub.status === "completed") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição para esse evento",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "pending") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição pendente de pagamento. Verifique seu",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "processing") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição em progresso",
+            HttpStatus.CONFLICT
+          );
+        }
       }
 
       // verificar se ele já tem alguma ordem de serviço em progresso ou paga
@@ -187,12 +205,12 @@ export class CreateTicketServiceOrderController {
         }
       }
 
-      if(!ticket.ticket_price_type.is_free) {
+      if (!ticket.ticket_price_type.is_free) {
         // verifica se o organizador pode receber pagamentos
         const userRecipient = await this.userRespository.findById(
           event.created_by_user_id
         );
-  
+
         if (!userRecipient) {
           return sendError(
             response,
@@ -201,7 +219,7 @@ export class CreateTicketServiceOrderController {
             HttpStatus.NOT_FOUND
           );
         }
-  
+
         if (!userRecipient.recipient) {
           return sendError(
             response,
@@ -210,7 +228,7 @@ export class CreateTicketServiceOrderController {
             HttpStatus.NOT_FOUND
           );
         }
-  
+
         if (userRecipient.recipient.status !== "completed") {
           return sendError(
             response,

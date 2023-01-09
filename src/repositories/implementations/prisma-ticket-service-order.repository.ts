@@ -7,7 +7,7 @@ export class PrismaTicketServiceOrderRepository
 {
   async findAllByTicketId({
     status,
-    ticketId,
+    ticketId, 
   }: {
     ticketId: string;
     status: "processing" | "open" | "settled" | "closed" | "canceled";

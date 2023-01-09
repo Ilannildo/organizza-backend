@@ -13,6 +13,7 @@ export interface ISubscriptionRepository {
     eventId: string;
   }): Promise<SubscriptionModel[]>;
   findByTicketId(ticket_id: string): Promise<SubscriptionModel[]>;
+  findOneByTicketId(ticket_id: string, status: "pending" | "processing" | "completed" | "refused"): Promise<SubscriptionModel>;
   findAll(): Promise<SubscriptionModel[]>;
   update(data: SubscriptionModel): Promise<SubscriptionModel>;
   save(data: SubscriptionModel): Promise<SubscriptionModel>;

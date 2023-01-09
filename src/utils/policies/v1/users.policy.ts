@@ -165,6 +165,15 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.EDIT_SERVICE_ORDER],
+      allows: [
+        {
+          resources: "/api/service-orders/:order_id/close",
+          permissions: ["put"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.VIEW_SERVICE_ORDER],
       allows: [
         {

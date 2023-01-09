@@ -35,8 +35,19 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
     return transaction;
   }
-  findById(params: { transaction_id: string }): Promise<TransactionModel> {
-    throw new Error("Method not implemented.");
+  async findById(params: {
+    transaction_id: string;
+  }): Promise<TransactionModel> {
+    const transaction = await client.transaction.findFirst({
+      where: {
+        transaction_id: params.transaction_id,
+      },
+      include: {
+        payment_method: true,
+        service_order: true,
+      },
+    });
+    return transaction;
   }
   async update(data: TransactionModel): Promise<TransactionModel> {
     const transaction = await client.transaction.update({

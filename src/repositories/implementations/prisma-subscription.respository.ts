@@ -77,13 +77,57 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     });
     return subscription;
   }
+  async findOneByTicketId(ticket_id: string, status: "pending" | "processing" | "completed" | "refused"): Promise<SubscriptionModel> {
+    const subscription = await client.subscription.findFirst({
+      where: {
+        ticket_service_order: {
+          ticket_id: ticket_id,
+        },
+        status
+      },
+      include: {
+        ticket_service_order: true,
+      },
+    });
+    return subscription;
+  }
   findAll(): Promise<SubscriptionModel[]> {
     throw new Error("Method not implemented.");
   }
-  update(data: SubscriptionModel): Promise<SubscriptionModel> {
-    throw new Error("Method not implemented.");
+  async update(data: SubscriptionModel): Promise<SubscriptionModel> {
+    const sub = await client.subscription.update({
+      data: {
+        code_ref: data.code_ref,
+        status: data.status,
+      },
+      where: {
+        id: data.id,
+      },
+    });
+    return sub;
   }
-  save(data: SubscriptionModel): Promise<SubscriptionModel> {
-    throw new Error("Method not implemented.");
+  async save(data: SubscriptionModel): Promise<SubscriptionModel> {
+    const sub = await client.subscription.create({
+      data: {
+        code_ref: data.code_ref,
+        status: data.status,
+        ticket_service_order: {
+          connect: {
+            id: data.ticket_service_order_id,
+          },
+        },
+        event: {
+          connect: {
+            id: data.event_id,
+          },
+        },
+        user: {
+          connect: {
+            uid: data.user_id,
+          },
+        },
+      },
+    });
+    return sub;
   }
 }

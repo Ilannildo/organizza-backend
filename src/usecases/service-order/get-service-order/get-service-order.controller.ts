@@ -129,13 +129,31 @@ export class GetServiceOrderController {
           eventId: ticket.event_id,
         });
 
-      if (userSubscriptions.length > 0) {
-        return sendError(
-          response,
-          Codes.CONFLICTING_CONDITION,
-          "Você já possui uma inscrição para esse evento",
-          HttpStatus.CONFLICT
-        );
+      for (const sub of userSubscriptions) {
+        if (sub.status === "completed") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição para esse evento",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "pending") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição pendente de pagamento. Verifique seu",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "processing") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição em progresso",
+            HttpStatus.CONFLICT
+          );
+        }
       }
 
       // verificar se ele já tem alguma ordem de serviço em progresso ou paga
@@ -216,7 +234,7 @@ export class GetServiceOrderController {
             event_title: event.title,
             title: ticket.category_title,
           },
-          total:ticketValue,
+          total: ticketValue,
         };
 
         return sendSuccessful(

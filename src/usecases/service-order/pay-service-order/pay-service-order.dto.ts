@@ -19,6 +19,7 @@ export interface IPayServiceORderResponse {
     | "chargeback"
     | "error";
   qr_code_url?: string;
+  order_id: string;
   qr_code?: string;
   expires_at?: Date;
 }

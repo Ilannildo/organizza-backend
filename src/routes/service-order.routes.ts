@@ -9,6 +9,7 @@ import { RequestWithAuth } from "../utils/types";
 
 import * as serviceOrderValidations from "../validations/service-order.validation";
 import * as policies from "../utils/policies/v1/users.policy";
+import { closeServiceOrderController } from "../usecases/service-order/close-service-order";
 export const serviceOrderRoutes = Router();
 
 policies.invokeRolesPolicies();
@@ -69,3 +70,10 @@ serviceOrderRoutes
       return payServiceOrderController.handle(request, response);
     }
   );
+
+serviceOrderRoutes
+  .route("/:order_id/close")
+  .all(policies.isAllowed)
+  .put((request: RequestWithAuth, response: Response) => {
+    return closeServiceOrderController.handle(request, response);
+  });

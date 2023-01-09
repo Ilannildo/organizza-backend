@@ -12,6 +12,7 @@ import { IPaymentMethodRepository } from "../../../repositories/interfaces/payme
 import { CreateTransactionProvider } from "../../../providers/create-transaction.provider";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 import { IPayServiceORderResponse } from "./pay-service-order.dto";
+import { SubscriptionModel } from "../../../models/subscription.model";
 
 export class PayServiceOrderController {
   constructor(
@@ -44,6 +45,8 @@ export class PayServiceOrderController {
         credit_card_expiration_date,
         credit_card_cvv,
       } = request.body;
+
+      const { user } = request;
 
       const serviceOrder = await this.serviceOrderRepository.findById({
         service_order_id,
@@ -140,7 +143,6 @@ export class PayServiceOrderController {
           HttpStatus.CONFLICT
         );
       }
-
       // verifica as inscrições pelo id do usuário
       const userSubscriptions =
         await this.subscriptionRepository.findByUserAndEventId({
@@ -148,13 +150,31 @@ export class PayServiceOrderController {
           eventId: ticket.event_id,
         });
 
-      if (userSubscriptions.length > 0) {
-        return sendError(
-          response,
-          Codes.CONFLICTING_CONDITION,
-          "Você já possui uma inscrição para esse evento",
-          HttpStatus.CONFLICT
-        );
+      for (const sub of userSubscriptions) {
+        if (sub.status === "completed") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição para esse evento",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "pending") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição pendente de pagamento. Verifique seu",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "processing") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição em progresso",
+            HttpStatus.CONFLICT
+          );
+        }
       }
 
       // verificar se ele já tem alguma ordem de serviço em progresso ou paga
@@ -281,8 +301,8 @@ export class PayServiceOrderController {
         },
         customer: {
           document: customer_document,
-          email: request.user.email,
-          name: request.user.name,
+          email: user.email,
+          name: user.name,
           phone: customer_phone_number,
         },
         installments,
@@ -307,8 +327,40 @@ export class PayServiceOrderController {
         );
       }
 
-      console.log("ORDER >>>", transaction.order);
-      
+      const subscription = new SubscriptionModel({
+        code_ref: "TESTE-123",
+        event_id: event.id,
+        status: "pending",
+        ticket_service_order_id: existsTicketServiceOrder.id,
+        user_id: user.uid,
+      });
+
+      if (transaction.order.status === "approved") {
+        serviceOrder.status = "settled";
+        subscription.status = "completed";
+      }
+      if (transaction.order.status === "error") {
+        serviceOrder.status = "closed";
+        subscription.status = "refused";
+      }
+      if (
+        transaction.order.status === "chargeback" ||
+        transaction.order.status === "refused" ||
+        transaction.order.status === "refunded"
+      ) {
+        serviceOrder.status = "canceled";
+        subscription.status = "refused";
+      }
+      if (
+        transaction.order.status === "processing" ||
+        transaction.order.status === "pending"
+      ) {
+        serviceOrder.status = "processing";
+        subscription.status = "processing";
+      }
+
+      await this.serviceOrderRepository.update(serviceOrder);
+      await this.subscriptionRepository.save(subscription);
 
       if (
         paymentMethod.payment_form === "pix" &&
@@ -316,6 +368,7 @@ export class PayServiceOrderController {
       ) {
         const paymentPixResponse: IPayServiceORderResponse = {
           payment_method: "pix",
+          order_id: transaction.order.transaction_id,
           status: transaction.order.status,
           expires_at: transaction.order.pix.expiration_date,
           qr_code: transaction.order.pix.code,
@@ -327,6 +380,7 @@ export class PayServiceOrderController {
       const paymentPixResponse: IPayServiceORderResponse = {
         payment_method: paymentMethod.payment_form,
         status: transaction.order.status,
+        order_id: transaction.order.transaction_id,
       };
 
       return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
