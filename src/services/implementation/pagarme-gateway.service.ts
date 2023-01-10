@@ -100,7 +100,7 @@ export class PagarmeGateway implements IPaymentGatewayService {
         paymentParams = {
           payment_method: "pix",
           pix: {
-            expires_at: addMinutes(new Date(), 1),
+            expires_at: addMinutes(new Date(), 10),
             additional_information: [
               {
                 name: "Quantidade",

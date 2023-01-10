@@ -339,10 +339,6 @@ export class PayServiceOrderController {
         serviceOrder.status = "settled";
         subscription.status = "completed";
       }
-      if (transaction.order.status === "error") {
-        serviceOrder.status = "closed";
-        subscription.status = "refused";
-      }
       if (
         transaction.order.status === "chargeback" ||
         transaction.order.status === "refused" ||
@@ -357,6 +353,10 @@ export class PayServiceOrderController {
       ) {
         serviceOrder.status = "processing";
         subscription.status = "processing";
+      }
+      if (transaction.order.status === "error") {
+        serviceOrder.status = "closed";
+        subscription.status = "refused";
       }
 
       await this.serviceOrderRepository.update(serviceOrder);

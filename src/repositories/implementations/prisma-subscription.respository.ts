@@ -61,8 +61,16 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
   findById(ticket_id: string): Promise<SubscriptionModel> {
     throw new Error("Method not implemented.");
   }
-  findByEventId(event_id: string): Promise<SubscriptionModel[]> {
-    throw new Error("Method not implemented.");
+  async findByEventId(event_id: string): Promise<SubscriptionModel[]> {
+    const subscription = await client.subscription.findMany({
+      where: {
+        event_id,
+      },
+      include: {
+        ticket_service_order: true,
+      },
+    });
+    return subscription;
   }
   async findByTicketId(ticket_id: string): Promise<SubscriptionModel[]> {
     const subscription = await client.subscription.findMany({
@@ -77,13 +85,16 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     });
     return subscription;
   }
-  async findOneByTicketId(ticket_id: string, status: "pending" | "processing" | "completed" | "refused"): Promise<SubscriptionModel> {
+  async findOneByTicketId(
+    ticket_id: string,
+    status: "pending" | "processing" | "completed" | "refused"
+  ): Promise<SubscriptionModel> {
     const subscription = await client.subscription.findFirst({
       where: {
         ticket_service_order: {
           ticket_id: ticket_id,
         },
-        status
+        status,
       },
       include: {
         ticket_service_order: true,

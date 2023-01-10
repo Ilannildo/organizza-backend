@@ -11,4 +11,8 @@ export interface ITicketServiceOrderRepository {
     ticketId: string;
     status: "open" | "processing" | "settled" | "closed" | "canceled";
   }): Promise<TicketServiceOrderModel[]>;
+  findAllByEventId(data: {
+    eventId: string;
+    status: "open" | "processing" | "settled" | "closed" | "canceled";
+  }): Promise<TicketServiceOrderModel[]>;
 }
