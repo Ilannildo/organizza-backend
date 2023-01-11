@@ -101,8 +101,7 @@ export class GetServiceOrderController {
       // verifica se a data de venda já começou
       const now = new Date();
       if (
-        ticket.start_date > now &&
-        ticket.start_time.getTime() > now.getTime()
+        ticket.start_date >= now
       ) {
         return sendError(
           response,
@@ -113,7 +112,7 @@ export class GetServiceOrderController {
       }
 
       // verifica se a data de venda já finalizou
-      if (ticket.due_date < now && ticket.due_time.getTime() < now.getTime()) {
+      if (ticket.due_date <= now) {
         return sendError(
           response,
           Codes.CONFLICTING_CONDITION,

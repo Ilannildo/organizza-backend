@@ -14,6 +14,7 @@ import * as policies from "../utils/policies/v1/users.policy";
 import { getAllTicketByEventIdController } from "../usecases/tickets/get-all-by-event-id";
 import { eventGeneralInformation } from "../usecases/events/general-information";
 import { getAllSessionBySessionTypeController } from "../usecases/sessions/get-all-session-by-session-type";
+import { createSessionController } from "../usecases/sessions/create-session";
 
 export const eventRoutes = Router();
 
@@ -43,7 +44,7 @@ eventRoutes
 
 // efetua o upload da capa do evento
 eventRoutes
-  .route("/cover")
+  .route("/:event_id/cover")
   .all(policies.isAllowed, multer(multerConfigs).single("cover"))
   .post(
     eventsValidations.upload_cover,
@@ -92,5 +93,16 @@ eventRoutes
       response: Response
     ) => {
       return getAllSessionBySessionTypeController.handle(request, response);
+    }
+  );
+
+// efetua a criação de ingresso para o evento
+eventRoutes
+  .route("/:event_id/sessions")
+  .all(policies.isAllowed)
+  .post(
+    eventsValidations.createSession,
+    (request: Request<{ event_id: string }>, response: Response) => {
+      return createSessionController.handle(request, response);
     }
   );

@@ -99,15 +99,35 @@ export class PrismaEventRepository implements IEventsRepository {
     return event;
   }
 
-  async findByUserId(user_id: string): Promise<EventModel[]> {
-    const events = await client.event.findMany({
-      where: {
-        created_by_user_id: user_id,
-      },
-      include: {
-        event_cover: true,
-      },
-    });
+  async findByUserId({
+    user_id,
+    limit,
+    page,
+  }: {
+    user_id: string;
+    page: number;
+    limit: number;
+  }): Promise<[number, EventModel[]]> {
+    const skip = Math.abs(page - 1) * limit;
+    const events = await client.$transaction([
+      client.event.count({
+        where: {
+          created_by_user_id: user_id,
+        },
+      }),
+      client.event.findMany({
+        where: {
+          created_by_user_id: user_id,
+        },
+        include: {
+          event_cover: true,
+          tickets: true,
+          subscriptions: true,
+        },
+        skip,
+        take: Number(limit),
+      }),
+    ]);
 
     return events;
   }

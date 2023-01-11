@@ -4,30 +4,82 @@ import { Codes } from "../../../utils/codes";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
 import { RequestWithAuth } from "../../../utils/types";
+import { IGetEventByUserIdResponse } from "./get-event-by-user-id.dto";
+
+interface IQuery {
+  page: number;
+  limit: number;
+}
 
 export class FindEventByUserIdController {
   constructor(private eventsRepository: IEventsRepository) {}
 
   async handle(request: RequestWithAuth, response: Response) {
+    let { page = 1, limit = 20 } = request.query as unknown as IQuery;
     try {
-      let events = await this.eventsRepository.findByUserId(request.user.uid);
+      let [total, events] = await this.eventsRepository.findByUserId({
+        user_id: request.user.uid,
+        limit,
+        page,
+      });
+
+      const eventResponse: IGetEventByUserIdResponse[] = [];
 
       for (const event of events) {
         const nowDate = new Date();
         if (event.end_date <= nowDate) {
           // evento encerrou
-          await this.eventsRepository.update({
-            ...event,
-            status: "finished",
-          });
+          event.status = "finished";
+          await this.eventsRepository.update(event);
         }
+
+        let remaining = 0;
+        let sold = 0;
+
+        for (const susbcription of event.subscriptions) {
+          if (susbcription.status === "completed") {
+            sold += 1;
+          }
+        }
+
+        const filteredIickets = event.tickets.filter((ticket) => {
+          const now = new Date();
+
+          if (ticket.start_date >= now) {
+            return false;
+          }
+
+          if (ticket.due_date <= now) {
+            return false;
+          }
+          return true;
+        });
+
+        const ticketTotalParticipant = filteredIickets.reduce(
+          (accumulator, ticket) => {
+            return (accumulator += ticket.participant_limit);
+          },
+          0
+        );
+
+        remaining = ticketTotalParticipant - sold;
+
+        eventResponse.push({
+          end_date: event.end_date,
+          event_id: event.id,
+          start_date: event.start_date,
+          status: event.status,
+          tickets: remaining,
+          title: event.title,
+        });
       }
 
-      // buscar novamente, pois pode haver atualizações
-      // TO-DO: pensar em um fluxo melhor
-      events = await this.eventsRepository.findByUserId(request.user.uid);
-
-      return sendSuccessful(response, events);
+      return sendSuccessful(response, {
+        total,
+        limit,
+        page,
+        events: eventResponse,
+      });
     } catch (error) {
       return sendError(
         response,

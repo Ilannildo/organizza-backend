@@ -55,10 +55,7 @@ export class GetInstallmentsController {
       );
 
       // verifica se a data de venda já começou
-      if (
-        ticket.start_date > now &&
-        ticket.start_time.getTime() > now.getTime()
-      ) {
+      if (ticket.start_date >= now) {
         return sendError(
           response,
           Codes.CONFLICTING_CONDITION,
@@ -68,7 +65,7 @@ export class GetInstallmentsController {
       }
 
       // verifica se a data de venda já finalizou
-      if (ticket.due_date < now && ticket.due_time.getTime() < now.getTime()) {
+      if (ticket.due_date <= now) {
         return sendError(
           response,
           Codes.CONFLICTING_CONDITION,

@@ -14,9 +14,7 @@ export class TicketModel {
   public value: number;
   public sold?: number;
   public start_date: Date | null;
-  public start_time: Date | null;
   public due_date: Date | null;
-  public due_time: Date | null;
 
   public event?: EventModel;
   public ticket_price_type?: TicketPriceTypeModel;

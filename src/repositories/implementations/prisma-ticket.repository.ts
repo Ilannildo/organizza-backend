@@ -80,7 +80,6 @@ export class PrismaTicketRepository implements ITicketRepository {
         category_title: data.category_title,
         description: data.description,
         due_date: data.due_date,
-        due_time: data.due_time,
         include_fee: data.include_fee,
         participant_limit: data.participant_limit,
         value: data.value,
@@ -99,12 +98,10 @@ export class PrismaTicketRepository implements ITicketRepository {
         category_title: data.category_title,
         description: data.description,
         due_date: data.due_date,
-        due_time: data.due_time,
         include_fee: data.include_fee,
         participant_limit: data.participant_limit,
         value: data.value,
         start_date: data.start_date,
-        start_time: data.start_time,
         sold: data.sold,
         event: {
           connect: {

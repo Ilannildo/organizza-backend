@@ -14,20 +14,7 @@ export const upload_cover = [
       code: Codes.DOCUMENT__NOT_FOUND,
       status: HttpStatus.UNPROCESSABLE_ENTITY,
     }),
-  check("event_id")
-    .not()
-    .isEmpty()
-    .withMessage({
-      message: "Você não informou o evento",
-      code: Codes.DOCUMENT__NOT_FOUND,
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-    })
-    .isUUID()
-    .withMessage({
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-      code: Codes.REQUEST__INVALID_NAME,
-      message: "Esse evento não é válido",
-    }),
+
   validationMiddleware,
 ];
 
@@ -94,18 +81,8 @@ export const register = [
     code: Codes.DOCUMENT__NOT_FOUND,
     status: HttpStatus.UNPROCESSABLE_ENTITY,
   }),
-  body("start_time").not().isEmpty().withMessage({
-    message: "A hora de início do evento é obrigatório",
-    code: Codes.DOCUMENT__NOT_FOUND,
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-  }),
   body("end_date").not().isEmpty().withMessage({
     message: "A data de fim do evento é obrigatório",
-    code: Codes.DOCUMENT__NOT_FOUND,
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-  }),
-  body("end_time").not().isEmpty().withMessage({
-    message: "A hora de fim do evento é obrigatório",
     code: Codes.DOCUMENT__NOT_FOUND,
     status: HttpStatus.UNPROCESSABLE_ENTITY,
   }),
@@ -146,5 +123,44 @@ export const findById = [
       code: Codes.REQUEST__INVALID_NAME,
       message: "Esse id do evento não é válido",
     }),
+  validationMiddleware,
+];
+
+export const createSession = [
+  body("title").not().isEmpty().withMessage({
+    message: "O título é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
+  body("summary").not().isEmpty().withMessage({
+    message: "O resumo/descrição é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
+  body("responsible_name").not().isEmpty().withMessage({
+    message: "O nome do responsável é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
+  body("session_type_id").not().isEmpty().withMessage({
+    message: "O tipo da sessão é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
+  body("place").not().isEmpty().withMessage({
+    message: "O local é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
+  body("start_date").not().isEmpty().withMessage({
+    message: "A data de início é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
+  body("end_date").not().isEmpty().withMessage({
+    message: "A data de término é obrigatório",
+    code: Codes.DOCUMENT__NOT_FOUND,
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  }),
   validationMiddleware,
 ];

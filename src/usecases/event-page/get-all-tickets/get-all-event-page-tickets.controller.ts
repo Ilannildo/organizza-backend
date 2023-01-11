@@ -105,18 +105,12 @@ export class GetAllEventPageTicketController {
         });
 
         const now = new Date();
-        if (
-          ticket.start_date > now &&
-          ticket.start_time.getTime() > now.getTime()
-        ) {
+        if (ticket.start_date >= now) {
           status = "Não iniciado";
           available = false;
         }
 
-        if (
-          ticket.due_date < now &&
-          ticket.due_time.getTime() < now.getTime()
-        ) {
+        if (ticket.due_date <= now) {
           status = "Encerrado";
           available = false;
         }
@@ -130,7 +124,6 @@ export class GetAllEventPageTicketController {
           available,
           status,
           due_date: ticket.due_date,
-          due_time: ticket.due_time,
         });
       }
 

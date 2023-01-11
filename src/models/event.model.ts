@@ -22,9 +22,7 @@ export class EventModel {
   public venue_type: "presential" | "online";
   public is_private: boolean;
   public start_date: Date;
-  public start_time: Date;
   public end_date: Date;
-  public end_time: Date;
   public logo_url?: string;
   public facebook_url?: string;
   public instagram_url?: string;
