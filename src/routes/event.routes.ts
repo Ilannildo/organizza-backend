@@ -15,6 +15,7 @@ import { getAllTicketByEventIdController } from "../usecases/tickets/get-all-by-
 import { eventGeneralInformation } from "../usecases/events/general-information";
 import { getAllSessionBySessionTypeController } from "../usecases/sessions/get-all-session-by-session-type";
 import { createSessionController } from "../usecases/sessions/create-session";
+import { getEventByUserIdInformationsController } from "../usecases/events/get-events-by-user-id-informations";
 
 export const eventRoutes = Router();
 
@@ -71,10 +72,10 @@ eventRoutes
 
 // busca as informações gerais para exebir no painel
 eventRoutes
-  .route("/:event_id/general-informations")
-  .all(policies.isAllowed)
-  .get((request: Request<{ event_id: string }>, response: Response) => {
-    return eventGeneralInformation.handle(request, response);
+  .route("/general-informations")
+  // .all(policies.isAllowed)
+  .get((request: RequestWithAuth, response: Response) => {
+    return getEventByUserIdInformationsController.handle(request, response);
   });
 
 // buscar evento pelo slug

@@ -46,9 +46,7 @@ export class PrismaEventRepository implements IEventsRepository {
         venue_type: data.venue_type,
         is_private: data.is_private,
         start_date: data.start_date,
-        start_time: data.start_time,
         end_date: data.end_date,
-        end_time: data.end_time,
         slug: data.slug,
         status: data.status,
         created_by_user: {
@@ -124,6 +122,9 @@ export class PrismaEventRepository implements IEventsRepository {
           tickets: true,
           subscriptions: true,
         },
+        orderBy: {
+          created_at: "desc"
+        },
         skip,
         take: Number(limit),
       }),
@@ -140,9 +141,7 @@ export class PrismaEventRepository implements IEventsRepository {
         venue_type: data.venue_type,
         is_private: data.is_private,
         start_date: data.start_date,
-        start_time: data.start_time,
         end_date: data.end_date,
-        end_time: data.end_time,
         slug: data.slug,
         status: data.status,
         event_type: {

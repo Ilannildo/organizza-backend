@@ -30,6 +30,9 @@ export class PrismaTicketRepository implements ITicketRepository {
             },
           },
         },
+        orderBy: {
+          created_at: "desc"
+        },
         skip,
         take: Number(limit),
       }),
