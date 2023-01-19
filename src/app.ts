@@ -1,25 +1,26 @@
+import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import { createWriteStream } from "fs";
-import passport from "passport";
 import morgan from "morgan";
-import cors from "cors";
+import passport from "passport";
 import path from "path";
 
+import { authRoutes } from "./routes/auth.routes";
+import { cityRoutes } from "./routes/city.routes";
+import { eventTypesRoutes } from "./routes/event-type.routes";
+import { eventRoutes } from "./routes/event.routes";
+import { mainSubjectRoutes } from "./routes/main-subject.routes";
+import { stateRoutes } from "./routes/state.routes";
+import { userRoutes } from "./routes/user.routes";
 import { authSessionMiddleware } from "./utils/middlewares/auth-session";
 import { handleJWTAuthentication } from "./utils/strategies/authenticate";
-import { mainSubjectRoutes } from "./routes/main-subject.routes";
-import { eventTypesRoutes } from "./routes/event-type.routes";
-import { stateRoutes } from "./routes/state.routes";
-import { eventRoutes } from "./routes/event.routes";
-import { cityRoutes } from "./routes/city.routes";
-import { authRoutes } from "./routes/auth.routes";
-import { userRoutes } from "./routes/user.routes";
 
-import * as policies from "./utils/policies/v1/users.policy";
 import { eventPageRoutes } from "./routes/event-page.routes";
-import { sessionTypesRoutes } from "./routes/session-type.routes";
-import { serviceOrderRoutes } from "./routes/service-order.routes";
 import { eventPanelRoutes } from "./routes/event-panel.routes";
+import { serviceOrderRoutes } from "./routes/service-order.routes";
+import { sessionTypesRoutes } from "./routes/session-type.routes";
+import { subscriptionRoutes } from "./routes/subscription.routes";
+import * as policies from "./utils/policies/v1/users.policy";
 
 // configurando o .env em ambiente de desenvolvimento
 if (process.env.NODE_ENV !== "production") {
@@ -110,5 +111,8 @@ app.use("/api/service-orders", serviceOrderRoutes);
 
 // adicionando as rotas de painel do evento
 app.use("/api/event-panel", eventPanelRoutes);
+
+// adicionando as rotas de painel do evento
+app.use("/api/subscriptions", subscriptionRoutes);
 
 export { app };

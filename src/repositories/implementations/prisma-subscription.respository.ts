@@ -3,6 +3,82 @@ import { client } from "../../prisma/client";
 import { ISubscriptionRepository } from "../interfaces/susbcription-repository";
 
 export class PrismaSubscriptionRepository implements ISubscriptionRepository {
+  async findPaginateByUserId({
+    limit,
+    page,
+    userId,
+    search,
+  }: {
+    userId: string;
+    page: number;
+    limit: number;
+    search: string;
+  }): Promise<[number, SubscriptionModel[]]> {
+    const skip = Math.abs(page - 1) * limit;
+
+    const subscription = await client.$transaction([
+      client.subscription.count({
+        where: {
+          user_id: userId,
+          status: {
+            not: "refused",
+          },
+          OR: [
+            {
+              event: {
+                title: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+            {
+              code_ref: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+      }),
+      client.subscription.findMany({
+        where: {
+          user_id: userId,
+          status: {
+            not: "refused",
+          },
+          OR: [
+            {
+              event: {
+                title: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+            {
+              code_ref: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+        include: {
+          ticket_service_order: true,
+          event: true,
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+        skip,
+        take: Number(limit),
+      }),
+    ]);
+
+    return subscription;
+  }
+
   async findByUserAndEventId({
     eventId,
     userId,
@@ -58,8 +134,36 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     });
     return subscription;
   }
-  findById(ticket_id: string): Promise<SubscriptionModel> {
-    throw new Error("Method not implemented.");
+
+  async findById(subscription_id: string): Promise<SubscriptionModel> {
+    const subscription = await client.subscription.findFirst({
+      where: {
+        id: subscription_id,
+      },
+      include: {
+        ticket_service_order: {
+          include: {
+            service_order: {
+              include: {
+                transactions: {
+                  include: {
+                    payment_method: true,
+                  },
+                },
+              },
+            },
+            ticket: {
+              include: {
+                ticket_price_type: true,
+              },
+            },
+          },
+        },
+        user: true,
+        event: true,
+      },
+    });
+    return subscription;
   }
   async findByEventId(event_id: string): Promise<SubscriptionModel[]> {
     const subscription = await client.subscription.findMany({
