@@ -1,18 +1,18 @@
 import { Response } from "express";
-import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
-import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
-import { RequestWithAuth } from "../../../utils/types";
-import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
-import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
-import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
-import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
-import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
-import { IPaymentMethodRepository } from "../../../repositories/interfaces/payment-method-repository";
-import { CreateTransactionProvider } from "../../../providers/create-transaction.provider";
-import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
-import { IPayServiceORderResponse } from "./pay-service-order.dto";
 import { SubscriptionModel } from "../../../models/subscription.model";
+import { CreateTransactionProvider } from "../../../providers/create-transaction.provider";
+import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
+import { IPaymentMethodRepository } from "../../../repositories/interfaces/payment-method-repository";
+import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
+import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
+import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
+import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
+import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
+import { Codes } from "../../../utils/codes";
+import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
+import { HttpStatus } from "../../../utils/httpStatus";
+import { RequestWithAuth } from "../../../utils/types";
+import { IPayServiceORderResponse } from "./pay-service-order.dto";
 
 export class PayServiceOrderController {
   constructor(
@@ -32,6 +32,7 @@ export class PayServiceOrderController {
       const {
         payment_method_id,
         installments,
+        is_free,
         customer_document,
         customer_phone_number,
         billing_city,
@@ -242,86 +243,151 @@ export class PayServiceOrderController {
         );
       }
 
-      const paymentMethod = await this.paymentMethodRepository.findById(
-        payment_method_id
-      );
-
-      if (!paymentMethod) {
-        return sendError(
-          response,
-          Codes.EXPIRED_TIME,
-          "O tipo de pagamento não é válido",
-          HttpStatus.NOT_FOUND
+      if (!ticket.ticket_price_type.is_free) {
+        const paymentMethod = await this.paymentMethodRepository.findById(
+          payment_method_id
         );
-      }
 
-      const userRecipient = await this.userRespository.findById(
-        event.created_by_user_id
-      );
+        if (!paymentMethod) {
+          return sendError(
+            response,
+            Codes.EXPIRED_TIME,
+            "O tipo de pagamento não é válido",
+            HttpStatus.NOT_FOUND
+          );
+        }
 
-      if (!userRecipient) {
-        return sendError(
-          response,
-          Codes.USER__NOT_FOUND,
-          "Não conseguimos encontrar o organizador do evento. Tente novamente!",
-          HttpStatus.NOT_FOUND
+        const userRecipient = await this.userRespository.findById(
+          event.created_by_user_id
         );
-      }
 
-      if (!userRecipient.recipient) {
-        return sendError(
-          response,
-          Codes.USER__NOT_FOUND,
-          "Esse evento não pode receber inscrições pagas. Contate o organizador!",
-          HttpStatus.NOT_FOUND
-        );
-      }
+        if (!userRecipient) {
+          return sendError(
+            response,
+            Codes.USER__NOT_FOUND,
+            "Não conseguimos encontrar o organizador do evento. Tente novamente!",
+            HttpStatus.NOT_FOUND
+          );
+        }
 
-      if (userRecipient.recipient.status !== "completed") {
-        return sendError(
-          response,
-          Codes.USER__NOT_FOUND,
-          "Esse evento não pode receber inscrições pagas. Contate o organizador!",
-          HttpStatus.NOT_FOUND
-        );
-      }
+        if (!userRecipient.recipient) {
+          return sendError(
+            response,
+            Codes.USER__NOT_FOUND,
+            "Esse evento não pode receber inscrições pagas. Contate o organizador!",
+            HttpStatus.NOT_FOUND
+          );
+        }
 
-      const transaction = await this.createTransactionProvider.execute({
-        billing: {
-          address: billing_address,
-          city: billing_city,
-          country: "BR",
-          neighborhood: billing_neighborhood,
-          number: billing_number,
-          state: billing_state,
-          zipcode: billing_zipcode,
-        },
-        customer: {
-          document: customer_document,
-          email: user.email,
-          name: user.name,
-          phone: customer_phone_number,
-        },
-        installments,
-        payment_method: paymentMethod,
-        service_order: serviceOrder,
-        credit_card: {
-          cvv: credit_card_cvv,
-          expiration_date: credit_card_expiration_date,
-          number: credit_card_number,
-          owner_name: credit_card_owner_name,
-        },
-        ticket,
-        recipient: userRecipient.recipient,
-      });
+        if (userRecipient.recipient.status !== "completed") {
+          return sendError(
+            response,
+            Codes.USER__NOT_FOUND,
+            "Esse evento não pode receber inscrições pagas. Contate o organizador!",
+            HttpStatus.NOT_FOUND
+          );
+        }
 
-      if (!transaction) {
-        return sendError(
-          response,
-          Codes.EXPIRED_TIME,
-          "Ocorreu um erro ao efetuar o pagamento. Tente novamente!",
-          HttpStatus.NOT_FOUND
-        );
+        const transaction = await this.createTransactionProvider.execute({
+          billing: {
+            address: billing_address,
+            city: billing_city,
+            country: "BR",
+            neighborhood: billing_neighborhood,
+            number: billing_number,
+            state: billing_state,
+            zipcode: billing_zipcode,
+          },
+          customer: {
+            document: customer_document,
+            email: user.email,
+            name: user.name,
+            phone: customer_phone_number,
+          },
+          installments,
+          payment_method: paymentMethod,
+          service_order: serviceOrder,
+          credit_card: {
+            cvv: credit_card_cvv,
+            expiration_date: credit_card_expiration_date,
+            number: credit_card_number,
+            owner_name: credit_card_owner_name,
+          },
+          ticket,
+          recipient: userRecipient.recipient,
+        });
+
+        if (!transaction) {
+          return sendError(
+            response,
+            Codes.EXPIRED_TIME,
+            "Ocorreu um erro ao efetuar o pagamento. Tente novamente!",
+            HttpStatus.NOT_FOUND
+          );
+        }
+
+        const subscription = new SubscriptionModel({
+          code_ref: "TESTE-123",
+          event_id: event.id,
+          status: "pending",
+          ticket_service_order_id: existsTicketServiceOrder.id,
+          user_id: user.uid,
+        });
+
+        if (transaction.order.status === "approved") {
+          serviceOrder.status = "settled";
+          serviceOrder.paid_at = new Date();
+          subscription.status = "completed";
+        }
+        if (
+          transaction.order.status === "chargeback" ||
+          transaction.order.status === "refused" ||
+          transaction.order.status === "refunded"
+        ) {
+          serviceOrder.status = "canceled";
+          subscription.status = "refused";
+        }
+        if (
+          transaction.order.status === "processing" ||
+          transaction.order.status === "pending"
+        ) {
+          serviceOrder.status = "processing";
+          subscription.status = "processing";
+        }
+        if (transaction.order.status === "error") {
+          serviceOrder.status = "closed";
+          subscription.status = "refused";
+        }
+
+        await this.serviceOrderRepository.update(serviceOrder);
+        await this.subscriptionRepository.save(subscription);
+
+        if (
+          paymentMethod.payment_form === "pix" &&
+          transaction.order.status === "pending"
+        ) {
+          const paymentPixResponse: IPayServiceORderResponse = {
+            payment_method: "pix",
+            order_id: transaction.order.transaction_id,
+            status: transaction.order.status,
+            expires_at: transaction.order.pix.expiration_date,
+            qr_code: transaction.order.pix.code,
+            qr_code_url: transaction.order.pix.qr_code_url,
+          };
+          return sendSuccessful(
+            response,
+            paymentPixResponse,
+            HttpStatus.CREATED
+          );
+        }
+
+        const paymentPixResponse: IPayServiceORderResponse = {
+          payment_method: paymentMethod.payment_form,
+          status: transaction.order.status,
+          order_id: transaction.order.transaction_id,
+        };
+
+        return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
       }
 
       const subscription = new SubscriptionModel({
@@ -332,55 +398,18 @@ export class PayServiceOrderController {
         user_id: user.uid,
       });
 
-      if (transaction.order.status === "approved") {
-        serviceOrder.status = "settled";
-        subscription.status = "completed";
-      }
-      if (
-        transaction.order.status === "chargeback" ||
-        transaction.order.status === "refused" ||
-        transaction.order.status === "refunded"
-      ) {
-        serviceOrder.status = "canceled";
-        subscription.status = "refused";
-      }
-      if (
-        transaction.order.status === "processing" ||
-        transaction.order.status === "pending"
-      ) {
-        serviceOrder.status = "processing";
-        subscription.status = "processing";
-      }
-      if (transaction.order.status === "error") {
-        serviceOrder.status = "closed";
-        subscription.status = "refused";
-      }
-
+      serviceOrder.status = "settled";
+      serviceOrder.paid_at = new Date();
+      subscription.status = "completed";
       await this.serviceOrderRepository.update(serviceOrder);
       await this.subscriptionRepository.save(subscription);
 
-      if (
-        paymentMethod.payment_form === "pix" &&
-        transaction.order.status === "pending"
-      ) {
-        const paymentPixResponse: IPayServiceORderResponse = {
-          payment_method: "pix",
-          order_id: transaction.order.transaction_id,
-          status: transaction.order.status,
-          expires_at: transaction.order.pix.expiration_date,
-          qr_code: transaction.order.pix.code,
-          qr_code_url: transaction.order.pix.qr_code_url,
-        };
-        return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
-      }
-
-      const paymentPixResponse: IPayServiceORderResponse = {
-        payment_method: paymentMethod.payment_form,
-        status: transaction.order.status,
-        order_id: transaction.order.transaction_id,
+      const paymentFreeResponse: IPayServiceORderResponse = {
+        status: "approved",
+        is_free: true,
       };
 
-      return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
+      return sendSuccessful(response, paymentFreeResponse, HttpStatus.CREATED);
     } catch (error) {
       return sendError(
         response,

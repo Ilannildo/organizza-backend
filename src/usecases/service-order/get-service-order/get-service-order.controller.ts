@@ -1,17 +1,14 @@
 import { Response } from "express";
-import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
-import { RequestWithAuth } from "../../../utils/types";
-import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
-import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
-import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
-import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
-import { TicketServiceOrderModel } from "../../../models/ticket-service-order.model";
-import { ServiceOrderModel } from "../../../models/service-order.model";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
+import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
+import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
-import { addMinutes, getUnixTime } from "date-fns";
+import { Codes } from "../../../utils/codes";
+import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
+import { HttpStatus } from "../../../utils/httpStatus";
+import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
+import { RequestWithAuth } from "../../../utils/types";
 import { IGetServiceOrderResponse } from "./get-service-order.dto";
 
 export class GetServiceOrderController {
@@ -100,9 +97,7 @@ export class GetServiceOrderController {
 
       // verifica se a data de venda já começou
       const now = new Date();
-      if (
-        ticket.start_date >= now
-      ) {
+      if (ticket.start_date >= now) {
         return sendError(
           response,
           Codes.CONFLICTING_CONDITION,
@@ -232,6 +227,7 @@ export class GetServiceOrderController {
           ticket: {
             event_title: event.title,
             title: ticket.category_title,
+            is_free: ticket.ticket_price_type.is_free,
           },
           total: ticketValue,
         };

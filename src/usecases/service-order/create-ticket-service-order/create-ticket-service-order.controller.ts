@@ -1,18 +1,18 @@
+import { addMinutes, getUnixTime } from "date-fns";
 import { Response } from "express";
-import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
-import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
-import { RequestWithAuth } from "../../../utils/types";
-import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
-import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
-import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
-import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
-import { TicketServiceOrderModel } from "../../../models/ticket-service-order.model";
 import { ServiceOrderModel } from "../../../models/service-order.model";
+import { TicketServiceOrderModel } from "../../../models/ticket-service-order.model";
+import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
+import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
+import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
-import { addMinutes, format, getUnixTime } from "date-fns";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
+import { Codes } from "../../../utils/codes";
+import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
+import { HttpStatus } from "../../../utils/httpStatus";
+import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
+import { RequestWithAuth } from "../../../utils/types";
 
 export class CreateTicketServiceOrderController {
   constructor(
@@ -126,7 +126,7 @@ export class CreateTicketServiceOrderController {
           return sendError(
             response,
             Codes.CONFLICTING_CONDITION,
-            "Você já possui uma inscrição pendente de pagamento. Verifique seu",
+            "Você já possui uma inscrição pendente de pagamento. Verifique seu email!",
             HttpStatus.CONFLICT
           );
         }
@@ -134,7 +134,7 @@ export class CreateTicketServiceOrderController {
           return sendError(
             response,
             Codes.CONFLICTING_CONDITION,
-            "Você já possui uma inscrição em progresso",
+            "Você já possui uma inscrição em progresso. Aguarde!",
             HttpStatus.CONFLICT
           );
         }

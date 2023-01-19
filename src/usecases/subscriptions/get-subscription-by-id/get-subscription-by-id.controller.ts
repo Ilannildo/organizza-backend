@@ -74,7 +74,7 @@ export class GetSubscriptionByIdController {
           code_ref: subscription.code_ref,
           fee: 0,
           payment_date: serviceOrder.paid_at,
-          payment_method: transaction.payment_method.name,
+          payment_method: transaction && transaction.payment_method.name,
           status_payment: serviceOrder.status,
           subscription_date: subscription.created_at,
           value: subscription.ticket_service_order.ticket.value,

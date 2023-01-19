@@ -27,6 +27,15 @@ export class GetEventPageController {
         });
       }
 
+      if (event.status === "started") {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Esse evento não existe ou não foi publicado",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
       const eventRespose: IGetEventPageRespose = {
         event_id: event.id,
         title: event.title,
