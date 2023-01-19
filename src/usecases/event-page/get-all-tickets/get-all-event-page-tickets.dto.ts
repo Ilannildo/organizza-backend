@@ -7,5 +7,4 @@ export interface IGetAllEventPageTicketsResponse {
   is_free: boolean;
   status: string;
   due_date: Date;
-  due_time: Date;
 }

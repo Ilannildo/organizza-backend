@@ -15,7 +15,7 @@ export class UploadEventCoverController {
   constructor(private eventCoverRepository: IEventCoverRepository) {}
 
   async handle(request: RequestWithAuth, response: Response) {
-    const { event_id } = request.body;
+    const { event_id } = request.params;
     const { fieldname, filename, size } = request.file;
 
     try {

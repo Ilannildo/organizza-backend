@@ -1,18 +1,18 @@
+import { addMinutes, getUnixTime } from "date-fns";
 import { Response } from "express";
-import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
-import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
-import { RequestWithAuth } from "../../../utils/types";
-import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
-import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
-import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
-import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
-import { TicketServiceOrderModel } from "../../../models/ticket-service-order.model";
 import { ServiceOrderModel } from "../../../models/service-order.model";
+import { TicketServiceOrderModel } from "../../../models/ticket-service-order.model";
+import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
+import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
+import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
-import { addMinutes, format, getUnixTime } from "date-fns";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
+import { Codes } from "../../../utils/codes";
+import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
+import { HttpStatus } from "../../../utils/httpStatus";
+import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
+import { RequestWithAuth } from "../../../utils/types";
 
 export class CreateTicketServiceOrderController {
   constructor(
@@ -87,10 +87,7 @@ export class CreateTicketServiceOrderController {
 
       // verifica se a data de venda já começou
       const now = new Date();
-      if (
-        ticket.start_date > now &&
-        ticket.start_time.getTime() > now.getTime()
-      ) {
+      if (ticket.start_date >= now) {
         return sendError(
           response,
           Codes.CONFLICTING_CONDITION,
@@ -100,7 +97,7 @@ export class CreateTicketServiceOrderController {
       }
 
       // verifica se a data de venda já finalizou
-      if (ticket.due_date < now && ticket.due_time.getTime() < now.getTime()) {
+      if (ticket.due_date <= now) {
         return sendError(
           response,
           Codes.CONFLICTING_CONDITION,
@@ -116,13 +113,31 @@ export class CreateTicketServiceOrderController {
           eventId: ticket.event_id,
         });
 
-      if (userSubscriptions.length > 0) {
-        return sendError(
-          response,
-          Codes.CONFLICTING_CONDITION,
-          "Você já possui uma inscrição para esse evento",
-          HttpStatus.CONFLICT
-        );
+      for (const sub of userSubscriptions) {
+        if (sub.status === "completed") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição para esse evento",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "pending") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição pendente de pagamento. Verifique seu email!",
+            HttpStatus.CONFLICT
+          );
+        }
+        if (sub.status === "processing") {
+          return sendError(
+            response,
+            Codes.CONFLICTING_CONDITION,
+            "Você já possui uma inscrição em progresso. Aguarde!",
+            HttpStatus.CONFLICT
+          );
+        }
       }
 
       // verificar se ele já tem alguma ordem de serviço em progresso ou paga
@@ -187,12 +202,12 @@ export class CreateTicketServiceOrderController {
         }
       }
 
-      if(!ticket.ticket_price_type.is_free) {
+      if (!ticket.ticket_price_type.is_free) {
         // verifica se o organizador pode receber pagamentos
         const userRecipient = await this.userRespository.findById(
           event.created_by_user_id
         );
-  
+
         if (!userRecipient) {
           return sendError(
             response,
@@ -201,7 +216,7 @@ export class CreateTicketServiceOrderController {
             HttpStatus.NOT_FOUND
           );
         }
-  
+
         if (!userRecipient.recipient) {
           return sendError(
             response,
@@ -210,7 +225,7 @@ export class CreateTicketServiceOrderController {
             HttpStatus.NOT_FOUND
           );
         }
-  
+
         if (userRecipient.recipient.status !== "completed") {
           return sendError(
             response,

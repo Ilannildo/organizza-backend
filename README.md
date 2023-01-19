@@ -32,6 +32,11 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 `SECRET_KEY`
 
 
+## CONFIGURAR AMBIENTE
+
+Crie uma pasta na raiz do projeto chama 'logs'. Ela serve para armazenar logs de requisições.
+Crie uma pasta na raiz do projeto chama 'tmp/uploads'. Ela serve para armazenar imagens e arquivos de uploads.
+
 ## Rodando localmente
 
 Entre no diretório do projeto
@@ -51,6 +56,8 @@ Inicie o servidor
 ```bash
   yarn start
 ```
+
+
 
 
 ## Licença

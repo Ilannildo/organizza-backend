@@ -14,6 +14,14 @@ export enum POLICY_ROLES {
   DELETE_SERVICE_ORDER = "delete_service_order",
   EDIT_SERVICE_ORDER = "edit_service_order",
   VIEW_SERVICE_ORDER = "view_service_order",
+  REGISTER_TICKET = "register_ticket",
+  DELETE_TICKET = "delete_ticket",
+  EDIT_TICKET = "edit_ticket",
+  VIEW_TICKET = "view_ticket",
+  REGISTER_SESSION = "register_session",
+  DELETE_SESSION = "delete_session",
+  EDIT_SESSION = "edit_session",
+  VIEW_SESSION = "view_session",
 }
 
 export function roleToPolicy(role?: RoleModel) {
@@ -54,6 +62,30 @@ export function roleToPolicy(role?: RoleModel) {
     }
     if (role.view_service_order) {
       roles.push(POLICY_ROLES.VIEW_SERVICE_ORDER);
+    }
+    if (role.register_ticket) {
+      roles.push(POLICY_ROLES.REGISTER_TICKET);
+    }
+    if (role.edit_ticket) {
+      roles.push(POLICY_ROLES.EDIT_TICKET);
+    }
+    if (role.delete_ticket) {
+      roles.push(POLICY_ROLES.DELETE_TICKET);
+    }
+    if (role.view_ticket) {
+      roles.push(POLICY_ROLES.VIEW_TICKET);
+    }
+    if (role.register_session) {
+      roles.push(POLICY_ROLES.REGISTER_SESSION);
+    }
+    if (role.edit_session) {
+      roles.push(POLICY_ROLES.EDIT_SESSION);
+    }
+    if (role.delete_session) {
+      roles.push(POLICY_ROLES.DELETE_SESSION);
+    }
+    if (role.view_session) {
+      roles.push(POLICY_ROLES.VIEW_SESSION);
     }
   }
   return roles;

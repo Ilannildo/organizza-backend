@@ -55,6 +55,9 @@ export class PrismaUserRepository implements IUsersRepository {
         },
         recipient: true,
       },
+      orderBy: {
+        created_at: "desc"
+      },
     });
 
     return users;

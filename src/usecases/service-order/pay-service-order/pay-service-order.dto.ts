@@ -1,5 +1,5 @@
 export interface IPayServiceORderResponse {
-  payment_method:
+  payment_method?:
     | "credit"
     | "debit"
     | "check"
@@ -19,6 +19,8 @@ export interface IPayServiceORderResponse {
     | "chargeback"
     | "error";
   qr_code_url?: string;
+  order_id?: string;
+  is_free?: boolean;
   qr_code?: string;
   expires_at?: Date;
 }

@@ -46,9 +46,7 @@ export class PrismaEventRepository implements IEventsRepository {
         venue_type: data.venue_type,
         is_private: data.is_private,
         start_date: data.start_date,
-        start_time: data.start_time,
         end_date: data.end_date,
-        end_time: data.end_time,
         slug: data.slug,
         status: data.status,
         created_by_user: {
@@ -99,15 +97,38 @@ export class PrismaEventRepository implements IEventsRepository {
     return event;
   }
 
-  async findByUserId(user_id: string): Promise<EventModel[]> {
-    const events = await client.event.findMany({
-      where: {
-        created_by_user_id: user_id,
-      },
-      include: {
-        event_cover: true,
-      },
-    });
+  async findByUserId({
+    user_id,
+    limit,
+    page,
+  }: {
+    user_id: string;
+    page: number;
+    limit: number;
+  }): Promise<[number, EventModel[]]> {
+    const skip = Math.abs(page - 1) * limit;
+    const events = await client.$transaction([
+      client.event.count({
+        where: {
+          created_by_user_id: user_id,
+        },
+      }),
+      client.event.findMany({
+        where: {
+          created_by_user_id: user_id,
+        },
+        include: {
+          event_cover: true,
+          tickets: true,
+          subscriptions: true,
+        },
+        orderBy: {
+          created_at: "desc"
+        },
+        skip,
+        take: Number(limit),
+      }),
+    ]);
 
     return events;
   }
@@ -120,9 +141,7 @@ export class PrismaEventRepository implements IEventsRepository {
         venue_type: data.venue_type,
         is_private: data.is_private,
         start_date: data.start_date,
-        start_time: data.start_time,
         end_date: data.end_date,
-        end_time: data.end_time,
         slug: data.slug,
         status: data.status,
         event_type: {

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
+import { Codes } from "../../../utils/codes";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
 import { IGetEventPageRespose } from "./get-event-page.dto";
 
 export class GetEventPageController {
@@ -20,14 +20,20 @@ export class GetEventPageController {
       }
 
       const nowDate = new Date();
-      if (
-        event.end_date <= nowDate &&
-        event.end_time.getTime() <= nowDate.getTime()
-      ) {
+      if (event.end_date <= nowDate) {
         event = await this.eventsRepository.update({
           ...event,
           status: "finished",
         });
+      }
+
+      if (event.status === "started") {
+        return sendError(
+          response,
+          Codes.ENTITY__NOT_FOUND,
+          "Esse evento não existe ou não foi publicado",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
       }
 
       const eventRespose: IGetEventPageRespose = {

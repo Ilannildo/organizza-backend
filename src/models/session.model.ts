@@ -15,9 +15,7 @@ export class SessionModel {
   public session_type_id: string;
   public place: string;
   public start_date: Date;
-  public start_time: Date;
   public end_date: Date;
-  public end_time: Date;
   public status: "published" | "started" | "finished";
   public created_at?: Date;
   public updated_at?: Date;

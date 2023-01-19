@@ -159,9 +159,7 @@ model Event {
   venue_type           EventVenueType
   is_private           Boolean
   start_date           DateTime
-  start_time           DateTime
   end_date             DateTime
-  end_time             DateTime
   logo_url             String?
   facebook_url         String?
   instagram_url        String?
@@ -245,9 +243,7 @@ model Ticket {
   value                 Float
   sold                  Int?
   start_date            DateTime
-  start_time            DateTime
   due_date              DateTime
-  due_time              DateTime
   created_at            DateTime             @default(now())
   updated_at            DateTime             @updatedAt
   event                 Event                @relation(fields: [event_id], references: [id])
@@ -278,9 +274,7 @@ model Session {
   session_type_id       String
   place                 String
   start_date            DateTime
-  start_time            DateTime
   end_date              DateTime
-  end_time              DateTime
   status                EventStatus
   created_at            DateTime              @default(now())
   updated_at            DateTime              @updatedAt

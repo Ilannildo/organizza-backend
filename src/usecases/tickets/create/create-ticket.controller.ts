@@ -16,10 +16,8 @@ export class CreateTicketController {
       const {
         category_title,
         start_date,
-        start_time,
         description,
         due_date,
-        due_time,
         event_id,
         include_fee,
         participant_limit,
@@ -68,10 +66,8 @@ export class CreateTicketController {
       const ticket = new TicketModel({
         category_title,
         start_date,
-        start_time,
         description,
         due_date,
-        due_time,
         event_id,
         include_fee,
         participant_limit,

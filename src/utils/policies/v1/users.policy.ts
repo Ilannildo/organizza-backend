@@ -74,7 +74,7 @@ export function invokeRolesPolicies() {
       roles: [POLICY_ROLES.REGISTER_EVENT],
       allows: [
         {
-          resources: "/api/events/cover",
+          resources: "/api/events/:event_id/cover",
           permissions: ["post"],
         },
       ],
@@ -89,7 +89,7 @@ export function invokeRolesPolicies() {
       ],
     },
     {
-      roles: [POLICY_ROLES.REGISTER_EVENT],
+      roles: [POLICY_ROLES.REGISTER_TICKET],
       allows: [
         {
           resources: "/api/events/:event_id/tickets",
@@ -98,19 +98,10 @@ export function invokeRolesPolicies() {
       ],
     },
     {
-      roles: [POLICY_ROLES.VIEW_EVENT],
+      roles: [POLICY_ROLES.VIEW_TICKET],
       allows: [
         {
           resources: "/api/events/:event_id/tickets",
-          permissions: ["get"],
-        },
-      ],
-    },
-    {
-      roles: [POLICY_ROLES.VIEW_EVENT],
-      allows: [
-        {
-          resources: "/api/events/:event_id/general-informations",
           permissions: ["get"],
         },
       ],
@@ -165,11 +156,29 @@ export function invokeRolesPolicies() {
       ],
     },
     {
+      roles: [POLICY_ROLES.EDIT_SERVICE_ORDER],
+      allows: [
+        {
+          resources: "/api/service-orders/:order_id/close",
+          permissions: ["put"],
+        },
+      ],
+    },
+    {
       roles: [POLICY_ROLES.VIEW_SERVICE_ORDER],
       allows: [
         {
           resources: "/api/service-orders/:service_order_id",
           permissions: ["get"],
+        },
+      ],
+    },
+    {
+      roles: [POLICY_ROLES.REGISTER_SESSION],
+      allows: [
+        {
+          resources: "/api/events/:event_id/sessions",
+          permissions: ["post"],
         },
       ],
     },
