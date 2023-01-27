@@ -7,17 +7,10 @@ export class SessionTicketModel {
   public id: string;
   public session_id: string;
   public ticket_price_type_id: string;
-  public category_title: string;
-  public include_fee: boolean;
   public participant_limit: number;
-  public description: string;
   public value: number;
-  public sold?: number;
-  public start_date: Date | null;
-  public start_time: Date | null;
-  public due_date: Date | null;
-  public due_time: Date | null;
-
+  public created_at?: Date;
+  public updated_at?: Date;
   public session?: SessionModel;
   public ticket_price_type?: TicketPriceTypeModel;
   public session_ticket_service_orders?: SessionTicketServiceOrderModel[];

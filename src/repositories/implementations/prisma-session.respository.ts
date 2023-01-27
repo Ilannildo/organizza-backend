@@ -14,13 +14,13 @@ export class PrismaSessionRepository implements ISessionRepository {
       client.session.count({
         where: {
           session_type_id: data.sessionTypeId,
-          event_id: data.eventId
+          event_id: data.eventId,
         },
       }),
       client.session.findMany({
         where: {
           session_type_id: data.sessionTypeId,
-          event_id: data.eventId
+          event_id: data.eventId,
         },
         include: {
           session_cover: true,
@@ -87,9 +87,7 @@ export class PrismaSessionRepository implements ISessionRepository {
         summary: data.summary,
         title: data.title,
         end_date: data.end_date,
-        end_time: data.end_time,
         start_date: data.start_date,
-        start_time: data.start_time,
       },
       include: {
         session_cover: true,
@@ -101,7 +99,29 @@ export class PrismaSessionRepository implements ISessionRepository {
     });
     return session;
   }
-  save(data: SessionModel): Promise<SessionModel> {
-    throw new Error("Method not implemented.");
+  async save(data: SessionModel): Promise<SessionModel> {
+    const session = await client.session.create({
+      data: {
+        credit_hour: data.credit_hour,
+        place: data.place,
+        responsible_name: data.responsible_name,
+        status: data.status,
+        summary: data.summary,
+        title: data.title,
+        end_date: data.end_date,
+        start_date: data.start_date,
+        event: {
+          connect: {
+            id: data.event_id,
+          },
+        },
+        session_type: {
+          connect: {
+            id: data.session_type_id,
+          },
+        },
+      },
+    });
+    return session;
   }
 }

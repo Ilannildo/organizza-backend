@@ -1,5 +1,4 @@
 import { SessionModel } from "../../models/session.model";
-import { SubscriptionModel } from "../../models/subscription.model";
 
 export interface ISessionRepository {
   findById(ticket_id: string): Promise<SessionModel>;

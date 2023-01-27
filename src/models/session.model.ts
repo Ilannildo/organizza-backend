@@ -2,15 +2,15 @@ import { v4 as uuid } from "uuid";
 import { EventModel } from "./event.model";
 import { SessionCoverModel } from "./session-cover.model";
 import { SessionSubscriptionModel } from "./session-subscription.model";
-import { SessionTypeModel } from "./session-type.model";
 import { SessionTicketModel } from "./session-ticket.model";
+import { SessionTypeModel } from "./session-type.model";
 
 export class SessionModel {
   public readonly id: string;
   public title: string;
   public credit_hour?: number;
   public summary: string;
-  public responsible_name: string;
+  public responsible_name?: string;
   public event_id: string;
   public session_type_id: string;
   public place: string;
@@ -23,7 +23,7 @@ export class SessionModel {
   public event?: EventModel;
   public session_cover?: SessionCoverModel;
   public session_type?: SessionTypeModel;
-  public session_tickets?: SessionTicketModel[];
+  public session_tickets?: SessionTicketModel;
   public session_subscriptions?: SessionSubscriptionModel[];
 
   constructor(props: Omit<SessionModel, "id">, id?: string) {

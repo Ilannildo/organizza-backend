@@ -326,13 +326,20 @@ export class PayServiceOrderController {
           );
         }
 
-        const subscription = new SubscriptionModel({
+        let subscription = new SubscriptionModel({
           code_ref: "TESTE-123",
           event_id: event.id,
           status: "pending",
           ticket_service_order_id: existsTicketServiceOrder.id,
           user_id: user.uid,
         });
+
+        const existsSubscription = subscriptions.find(
+          (sub) => sub.ticket_service_order_id === existsTicketServiceOrder.id
+        );
+        if (existsSubscription) {
+          subscription = existsSubscription;
+        }
 
         if (transaction.order.status === "approved") {
           serviceOrder.status = "settled";
@@ -390,13 +397,21 @@ export class PayServiceOrderController {
         return sendSuccessful(response, paymentPixResponse, HttpStatus.CREATED);
       }
 
-      const subscription = new SubscriptionModel({
+      let subscription = new SubscriptionModel({
         code_ref: "TESTE-123",
         event_id: event.id,
         status: "pending",
         ticket_service_order_id: existsTicketServiceOrder.id,
         user_id: user.uid,
       });
+
+      const existsSubscription = subscriptions.find(
+        (sub) => sub.ticket_service_order_id === existsTicketServiceOrder.id
+      );
+
+      if (existsSubscription) {
+        subscription = existsSubscription;
+      }
 
       serviceOrder.status = "settled";
       serviceOrder.paid_at = new Date();

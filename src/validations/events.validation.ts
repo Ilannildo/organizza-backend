@@ -1,4 +1,4 @@
-import { body, check, param, query } from "express-validator";
+import { body, check, query } from "express-validator";
 import { Codes } from "../utils/codes";
 import { HttpStatus } from "../utils/httpStatus";
 import validationMiddleware from "../utils/middlewares/validations";
@@ -134,11 +134,6 @@ export const createSession = [
   }),
   body("summary").not().isEmpty().withMessage({
     message: "O resumo/descrição é obrigatório",
-    code: Codes.DOCUMENT__NOT_FOUND,
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-  }),
-  body("responsible_name").not().isEmpty().withMessage({
-    message: "O nome do responsável é obrigatório",
     code: Codes.DOCUMENT__NOT_FOUND,
     status: HttpStatus.UNPROCESSABLE_ENTITY,
   }),

@@ -268,8 +268,8 @@ model Session {
   id                    String                @id @default(uuid())
   title                 String
   credit_hour           Int?
-  summary               String?
-  responsible_name      String
+  summary               String
+  responsible_name      String?
   event_id              String
   session_type_id       String
   place                 String
@@ -282,7 +282,7 @@ model Session {
   event                 Event                 @relation(fields: [event_id], references: [id])
   session_cover         SessionCover?
   session_type          SessionType           @relation(fields: [session_type_id], references: [id])
-  session_tickets       SessionTicket[]
+  session_tickets       SessionTicket?
   session_subscriptions SessionSubscription[]
 
   @@map("sessions")
@@ -316,18 +316,10 @@ model SessionType {
 
 model SessionTicket {
   id                            String                      @id @default(uuid())
-  category_title                String
-  include_fee                   Boolean
-  session_id                    String
+  session_id                    String                      @unique
   ticket_price_type_id          String
   participant_limit             Int
-  description                   String?
   value                         Float
-  sold                          Int?
-  start_date                    DateTime
-  start_time                    DateTime
-  due_date                      DateTime
-  due_time                      DateTime
   created_at                    DateTime                    @default(now())
   updated_at                    DateTime                    @updatedAt
   session                       Session                     @relation(fields: [session_id], references: [id])
