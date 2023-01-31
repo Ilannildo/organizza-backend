@@ -10,6 +10,7 @@ export class SessionModel {
   public title: string;
   public credit_hour?: number;
   public summary: string;
+  public code_ref?: string;
   public responsible_name?: string;
   public event_id: string;
   public session_type_id: string;

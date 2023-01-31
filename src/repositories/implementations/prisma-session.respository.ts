@@ -26,7 +26,11 @@ export class PrismaSessionRepository implements ISessionRepository {
           session_cover: true,
           event: true,
           session_subscriptions: true,
-          session_tickets: true,
+          session_tickets: {
+            include: {
+              ticket_price_type: true,
+            },
+          },
           session_type: true,
         },
         skip,
@@ -93,7 +97,11 @@ export class PrismaSessionRepository implements ISessionRepository {
         session_cover: true,
         event: true,
         session_subscriptions: true,
-        session_tickets: true,
+        session_tickets: {
+          include: {
+            ticket_price_type: true,
+          },
+        },
         session_type: true,
       },
     });
@@ -109,6 +117,7 @@ export class PrismaSessionRepository implements ISessionRepository {
         summary: data.summary,
         title: data.title,
         end_date: data.end_date,
+        code_ref: data.code_ref,
         start_date: data.start_date,
         event: {
           connect: {

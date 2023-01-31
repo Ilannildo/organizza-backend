@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import { TicketModel } from "../../../models/ticket.model";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
 import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
 import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
-import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
-import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 import { Codes } from "../../../utils/codes";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
@@ -59,14 +56,15 @@ export class GetEventPanelTicketInformationController {
         return true;
       });
 
-      const ticketTotalParticipant = filteredIickets.reduce(
-        (accumulator, ticket) => {
-          return (accumulator += ticket.participant_limit);
-        },
-        0
-      );
+      const ticketTotalParticipant =
+        filteredIickets.length > 0
+          ? filteredIickets.reduce((accumulator, ticket) => {
+              return (accumulator += ticket.participant_limit);
+            }, 0)
+          : 0;
 
-      remaining = ticketTotalParticipant - sold;
+      remaining =
+        ticketTotalParticipant > 0 ? ticketTotalParticipant - sold : 0;
 
       const eventPanelResponse: IGetEventPanelTicketInformationResponse = {
         canceled,

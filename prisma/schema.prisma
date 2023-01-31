@@ -267,6 +267,7 @@ model MainSubject {
 model Session {
   id                    String                @id @default(uuid())
   title                 String
+  code_ref              String?
   credit_hour           Int?
   summary               String
   responsible_name      String?

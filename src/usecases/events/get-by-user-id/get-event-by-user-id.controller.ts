@@ -55,14 +55,15 @@ export class FindEventByUserIdController {
           return true;
         });
 
-        const ticketTotalParticipant = filteredIickets.reduce(
-          (accumulator, ticket) => {
-            return (accumulator += ticket.participant_limit);
-          },
-          0
-        );
+        const ticketTotalParticipant =
+          filteredIickets.length > 0
+            ? filteredIickets.reduce((accumulator, ticket) => {
+                return (accumulator += ticket.participant_limit);
+              }, 0)
+            : 0;
 
-        remaining = ticketTotalParticipant - sold;
+        remaining =
+          ticketTotalParticipant > 0 ? ticketTotalParticipant - sold : 0;
 
         eventResponse.push({
           end_date: event.end_date,

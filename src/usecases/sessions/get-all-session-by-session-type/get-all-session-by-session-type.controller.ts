@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
+import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
+import { ISessionRepository } from "../../../repositories/interfaces/session-repository";
 import { ISessionTypeRepository } from "../../../repositories/interfaces/session-type-repository";
+import { Codes } from "../../../utils/codes";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
-import { ISessionRepository } from "../../../repositories/interfaces/session-repository";
-import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
+import { calculateTicketFee, calculateTicketValue } from "../../../utils/roles";
+import { IGetAllSessionBySessionTypeResponse } from "./get-all-session-by-session-type.dto";
 
 interface IQuery {
   page: number;
@@ -67,9 +69,49 @@ export class GetAllSessionBySessionTypeController {
           page,
         });
 
+      const sessionResponse: IGetAllSessionBySessionTypeResponse[] = [];
+      for (const session of sessions) {
+        // calcular o preço final do ticket (incluindo a taxa)
+
+        const nowDate = new Date();
+
+        if (session.start_date >= nowDate) {
+          // sessão começou
+          session.status = "published";
+          await this.sessionRepository.update(session);
+        }
+
+        if (session.end_date <= nowDate) {
+          // sessão encerrou
+          session.status = "finished";
+          await this.sessionRepository.update(session);
+        }
+
+        const fee = calculateTicketFee({
+          ticket_price_type: session.session_tickets.ticket_price_type,
+          value: session.session_tickets.value,
+        });
+
+        const ticketValue = calculateTicketValue({
+          fee,
+          includeFee: false,
+          value: session.session_tickets.value,
+        });
+        sessionResponse.push({
+          end_date: session.end_date,
+          id: session.id,
+          is_free: session.session_tickets.ticket_price_type.is_free,
+          start_date: session.start_date,
+          title: session.title,
+          value: ticketValue,
+          code_ref: session.code_ref,
+          status: session.status,
+        });
+      }
+
       return sendSuccessful(
         response,
-        { total, limit, page, sessions },
+        { total, limit, page, sessions: sessionResponse },
         HttpStatus.OK
       );
     } catch (error) {

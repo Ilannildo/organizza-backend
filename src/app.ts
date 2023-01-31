@@ -20,6 +20,7 @@ import { eventPanelRoutes } from "./routes/event-panel.routes";
 import { serviceOrderRoutes } from "./routes/service-order.routes";
 import { sessionTypesRoutes } from "./routes/session-type.routes";
 import { subscriptionRoutes } from "./routes/subscription.routes";
+import { ticketTypeRoute } from "./routes/ticket-type.routes";
 import * as policies from "./utils/policies/v1/users.policy";
 
 // configurando o .env em ambiente de desenvolvimento
@@ -114,5 +115,8 @@ app.use("/api/event-panel", eventPanelRoutes);
 
 // adicionando as rotas de painel do evento
 app.use("/api/subscriptions", subscriptionRoutes);
+
+// adicionando as rotas de painel do evento
+app.use("/api/ticket-price-types", ticketTypeRoute);
 
 export { app };

@@ -6,6 +6,7 @@ import { ISessionRepository } from "../../../repositories/interfaces/session-rep
 import { ISessionTicketRepository } from "../../../repositories/interfaces/session-ticket-repository";
 import { ISessionTypeRepository } from "../../../repositories/interfaces/session-type-repository";
 import { Codes } from "../../../utils/codes";
+import { generateReferenceCode } from "../../../utils/formatters/generate-code-ref";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
 
@@ -78,7 +79,43 @@ export class CreateSessionController {
         return sendError(
           response,
           Codes.VALIDATION_ERROR,
-          "A data de término deve ser maior que a data de início da atividade",
+          "A data de término da atividade deve ser maior que a data de início da atividade",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
+      if (startDate < eventAlreadyExistsById.start_date) {
+        return sendError(
+          response,
+          Codes.VALIDATION_ERROR,
+          "A data de início da atividade deve ser maior que a data do início do evento",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
+      if (startDate >= eventAlreadyExistsById.end_date) {
+        return sendError(
+          response,
+          Codes.VALIDATION_ERROR,
+          "A data de início da atividade deve ser menor que a data do término do evento",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
+      if (endDate <= eventAlreadyExistsById.start_date) {
+        return sendError(
+          response,
+          Codes.VALIDATION_ERROR,
+          "A data de término da atividade deve ser maior que a data de início do evento",
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
+
+      if (endDate >= eventAlreadyExistsById.end_date) {
+        return sendError(
+          response,
+          Codes.VALIDATION_ERROR,
+          "A data de término da atividade deve ser menor que a data de término do evento",
           HttpStatus.UNPROCESSABLE_ENTITY
         );
       }
@@ -91,6 +128,7 @@ export class CreateSessionController {
         event_id: eventAlreadyExistsById.id,
         session_type_id: sessionType.id,
         place,
+        code_ref: generateReferenceCode(sessionType.title),
         start_date: startDate,
         end_date: endDate,
         status: "started",

@@ -9,6 +9,7 @@ import { ITicketRepository } from "../../../repositories/interfaces/ticket-repos
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
 import { Codes } from "../../../utils/codes";
+import { generateReferenceCode } from "../../../utils/formatters/generate-code-ref";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
 import { RequestWithAuth } from "../../../utils/types";
@@ -398,7 +399,7 @@ export class PayServiceOrderController {
       }
 
       let subscription = new SubscriptionModel({
-        code_ref: "TESTE-123",
+        code_ref: generateReferenceCode(ticket.category_title),
         event_id: event.id,
         status: "pending",
         ticket_service_order_id: existsTicketServiceOrder.id,
