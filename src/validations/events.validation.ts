@@ -147,15 +147,15 @@ export const createSession = [
     code: Codes.DOCUMENT__NOT_FOUND,
     status: HttpStatus.UNPROCESSABLE_ENTITY,
   }),
-  body("start_date").not().isEmpty().withMessage({
-    message: "A data de início é obrigatório",
+  body("dates").not().isEmpty().withMessage({
+    message: "A data é obrigatório",
     code: Codes.DOCUMENT__NOT_FOUND,
     status: HttpStatus.UNPROCESSABLE_ENTITY,
   }),
-  body("end_date").not().isEmpty().withMessage({
-    message: "A data de término é obrigatório",
-    code: Codes.DOCUMENT__NOT_FOUND,
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-  }),
+  // body("end_date").not().isEmpty().withMessage({
+  //   message: "A data de término é obrigatório",
+  //   code: Codes.DOCUMENT__NOT_FOUND,
+  //   status: HttpStatus.UNPROCESSABLE_ENTITY,
+  // }),
   validationMiddleware,
 ];

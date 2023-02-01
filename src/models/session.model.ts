@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { EventModel } from "./event.model";
 import { SessionCoverModel } from "./session-cover.model";
+import { SessionDatesModel } from "./session-date.model";
 import { SessionSubscriptionModel } from "./session-subscription.model";
 import { SessionTicketModel } from "./session-ticket.model";
 import { SessionTypeModel } from "./session-type.model";
@@ -15,8 +16,6 @@ export class SessionModel {
   public event_id: string;
   public session_type_id: string;
   public place: string;
-  public start_date: Date;
-  public end_date: Date;
   public status: "published" | "started" | "finished";
   public created_at?: Date;
   public updated_at?: Date;
@@ -26,6 +25,7 @@ export class SessionModel {
   public session_type?: SessionTypeModel;
   public session_tickets?: SessionTicketModel;
   public session_subscriptions?: SessionSubscriptionModel[];
+  public session_dates?: SessionDatesModel[];
 
   constructor(props: Omit<SessionModel, "id">, id?: string) {
     Object.assign(this, props);

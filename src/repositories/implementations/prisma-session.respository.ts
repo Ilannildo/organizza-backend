@@ -1,3 +1,4 @@
+import { SessionDatesModel } from "../../models/session-date.model";
 import { SessionModel } from "../../models/session.model";
 import { client } from "../../prisma/client";
 import { ISessionRepository } from "../interfaces/session-repository";
@@ -29,6 +30,11 @@ export class PrismaSessionRepository implements ISessionRepository {
           session_tickets: {
             include: {
               ticket_price_type: true,
+            },
+          },
+          session_dates: {
+            orderBy: {
+              position: "desc",
             },
           },
           session_type: true,
@@ -90,8 +96,6 @@ export class PrismaSessionRepository implements ISessionRepository {
         status: data.status,
         summary: data.summary,
         title: data.title,
-        end_date: data.end_date,
-        start_date: data.start_date,
       },
       include: {
         session_cover: true,
@@ -107,7 +111,10 @@ export class PrismaSessionRepository implements ISessionRepository {
     });
     return session;
   }
-  async save(data: SessionModel): Promise<SessionModel> {
+  async save(
+    data: SessionModel,
+    dates: SessionDatesModel[]
+  ): Promise<SessionModel> {
     const session = await client.session.create({
       data: {
         credit_hour: data.credit_hour,
@@ -116,9 +123,12 @@ export class PrismaSessionRepository implements ISessionRepository {
         status: data.status,
         summary: data.summary,
         title: data.title,
-        end_date: data.end_date,
         code_ref: data.code_ref,
-        start_date: data.start_date,
+        session_dates: {
+          createMany: {
+            data: dates,
+          },
+        },
         event: {
           connect: {
             id: data.event_id,

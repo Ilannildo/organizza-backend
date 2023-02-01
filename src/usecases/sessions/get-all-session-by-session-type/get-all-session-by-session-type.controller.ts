@@ -73,15 +73,25 @@ export class GetAllSessionBySessionTypeController {
       for (const session of sessions) {
         // calcular o preço final do ticket (incluindo a taxa)
 
-        const nowDate = new Date();
+        const sessionDates = session.session_dates;
+        const sessionStartDate = sessionDates.filter(
+          (date) => date.type === "start"
+        );
+        const sessionEndDate = sessionDates.filter(
+          (date) => date.type === "end"
+        );
 
-        if (session.start_date >= nowDate) {
+        const nowDate = new Date();
+        const startDate = sessionStartDate[0].date;
+        const endDate = sessionEndDate[sessionDates.length - 1].date;
+
+        if (startDate >= nowDate) {
           // sessão começou
           session.status = "published";
           await this.sessionRepository.update(session);
         }
 
-        if (session.end_date <= nowDate) {
+        if (endDate <= nowDate) {
           // sessão encerrou
           session.status = "finished";
           await this.sessionRepository.update(session);
@@ -98,10 +108,10 @@ export class GetAllSessionBySessionTypeController {
           value: session.session_tickets.value,
         });
         sessionResponse.push({
-          end_date: session.end_date,
+          end_date: endDate,
           id: session.id,
           is_free: session.session_tickets.ticket_price_type.is_free,
-          start_date: session.start_date,
+          start_date: startDate,
           title: session.title,
           value: ticketValue,
           code_ref: session.code_ref,

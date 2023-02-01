@@ -1,3 +1,4 @@
+import { SessionDatesModel } from "../../models/session-date.model";
 import { SessionModel } from "../../models/session.model";
 
 export interface ISessionRepository {
@@ -14,5 +15,5 @@ export interface ISessionRepository {
   }): Promise<[number, SessionModel[]]>;
   findAll(): Promise<SessionModel[]>;
   update(data: SessionModel): Promise<SessionModel>;
-  save(data: SessionModel): Promise<SessionModel>;
+  save(data: SessionModel, dates: SessionDatesModel[]): Promise<SessionModel>;
 }

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { SessionDatesModel } from "../../../models/session-date.model";
 import { SessionTicketModel } from "../../../models/session-ticket.model";
 import { SessionModel } from "../../../models/session.model";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
@@ -9,6 +10,12 @@ import { Codes } from "../../../utils/codes";
 import { generateReferenceCode } from "../../../utils/formatters/generate-code-ref";
 import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { HttpStatus } from "../../../utils/httpStatus";
+
+export interface ISessionDatesForm {
+  date: Date;
+  type: "start" | "end";
+  position: number;
+}
 
 export class CreateSessionController {
   constructor(
@@ -31,6 +38,7 @@ export class CreateSessionController {
         place,
         start_date,
         end_date,
+        dates,
       } = request.body;
 
       const { event_id } = request.params;
@@ -61,65 +69,6 @@ export class CreateSessionController {
         );
       }
 
-      // verifica se a data de início é maior que a data atual
-      const currentDate = new Date();
-      const startDate = new Date(start_date);
-      if (startDate < currentDate) {
-        return sendError(
-          response,
-          Codes.VALIDATION_ERROR,
-          "A data de início da atividade deve ser maior que a data atual",
-          HttpStatus.UNPROCESSABLE_ENTITY
-        );
-      }
-      // verifica se a data de término é maior que a data de início de vendas
-      const endDate = new Date(end_date);
-
-      if (endDate <= startDate) {
-        return sendError(
-          response,
-          Codes.VALIDATION_ERROR,
-          "A data de término da atividade deve ser maior que a data de início da atividade",
-          HttpStatus.UNPROCESSABLE_ENTITY
-        );
-      }
-
-      if (startDate < eventAlreadyExistsById.start_date) {
-        return sendError(
-          response,
-          Codes.VALIDATION_ERROR,
-          "A data de início da atividade deve ser maior que a data do início do evento",
-          HttpStatus.UNPROCESSABLE_ENTITY
-        );
-      }
-
-      if (startDate >= eventAlreadyExistsById.end_date) {
-        return sendError(
-          response,
-          Codes.VALIDATION_ERROR,
-          "A data de início da atividade deve ser menor que a data do término do evento",
-          HttpStatus.UNPROCESSABLE_ENTITY
-        );
-      }
-
-      if (endDate <= eventAlreadyExistsById.start_date) {
-        return sendError(
-          response,
-          Codes.VALIDATION_ERROR,
-          "A data de término da atividade deve ser maior que a data de início do evento",
-          HttpStatus.UNPROCESSABLE_ENTITY
-        );
-      }
-
-      if (endDate >= eventAlreadyExistsById.end_date) {
-        return sendError(
-          response,
-          Codes.VALIDATION_ERROR,
-          "A data de término da atividade deve ser menor que a data de término do evento",
-          HttpStatus.UNPROCESSABLE_ENTITY
-        );
-      }
-
       const session = new SessionModel({
         title,
         credit_hour,
@@ -129,12 +78,26 @@ export class CreateSessionController {
         session_type_id: sessionType.id,
         place,
         code_ref: generateReferenceCode(sessionType.title),
-        start_date: startDate,
-        end_date: endDate,
         status: "started",
       });
 
-      const sessionCreated = await this.sessionRespository.save(session);
+      const newsSessionDates: SessionDatesModel[] = [];
+      const sessionDates = dates as ISessionDatesForm[];
+
+      for (const date of sessionDates) {
+        const newDate = new SessionDatesModel({
+          date: date.date,
+          position: date.position,
+          status: "started",
+          type: date.type,
+        });
+        newsSessionDates.push(newDate);
+      }
+
+      const sessionCreated = await this.sessionRespository.save(
+        session,
+        newsSessionDates
+      );
 
       const sessionTicket = new SessionTicketModel({
         participant_limit,

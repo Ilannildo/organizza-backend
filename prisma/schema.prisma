@@ -274,8 +274,6 @@ model Session {
   event_id              String
   session_type_id       String
   place                 String
-  start_date            DateTime
-  end_date              DateTime
   status                EventStatus
   created_at            DateTime              @default(now())
   updated_at            DateTime              @updatedAt
@@ -285,8 +283,24 @@ model Session {
   session_type          SessionType           @relation(fields: [session_type_id], references: [id])
   session_tickets       SessionTicket?
   session_subscriptions SessionSubscription[]
+  session_dates         SessionDates[]
 
   @@map("sessions")
+}
+
+model SessionDates {
+  id         String            @id @default(uuid())
+  date       DateTime
+  type       SessionDateType
+  position   Int
+  status     SessionDateStatus
+  session_id String
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+  deleted_at DateTime?
+  session    Session           @relation(fields: [session_id], references: [id])
+
+  @@map("session_dates")
 }
 
 model SessionCover {
@@ -559,4 +573,14 @@ enum RecipientStatus {
   refused // recusada
   completed // completa
   canceled // cancelada
+}
+
+enum SessionDateType {
+  start // início
+  end // término
+}
+
+enum SessionDateStatus {
+  started // iniciado
+  finished // encerrado
 }
