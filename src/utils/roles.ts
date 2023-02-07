@@ -132,3 +132,17 @@ export const creditCards = [
     checkdigit: true,
   },
 ];
+
+export function removeDuplicateDates(dates: { date: Date }[]): Date[] {
+  // return Array.from(
+  //   new Set(
+  //     dates.map(
+  //       ({ date }) =>
+  //         new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0)
+  //     )
+  //   )
+  // );
+  return [...new Set(dates.map(({ date }) => date.toDateString()))].map(
+    (dateString) => new Date(dateString)
+  );
+}

@@ -83,7 +83,7 @@ export class GetAllSessionBySessionTypeController {
 
         const nowDate = new Date();
         const startDate = sessionStartDate[0].date;
-        const endDate = sessionEndDate[sessionDates.length - 1].date;
+        const endDate = sessionEndDate[sessionEndDate.length - 1].date;
 
         if (startDate >= nowDate) {
           // sessão começou

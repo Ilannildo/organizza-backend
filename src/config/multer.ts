@@ -9,7 +9,10 @@ export const multerConfigs: Options = {
     },
     filename: (req, file, next) => {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      const filename = `${uniqueSuffix}-${file.originalname}`;
+      const formatedOriginalName = file.originalname
+        .replace(/\s+/g, "-")
+        .toLowerCase();
+      const filename = `${uniqueSuffix}-${formatedOriginalName}`;
       next(null, filename);
     },
   }),

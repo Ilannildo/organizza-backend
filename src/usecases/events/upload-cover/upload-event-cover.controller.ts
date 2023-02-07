@@ -1,13 +1,13 @@
 import { Response } from "express";
-import { promisify } from "util";
 import { unlink } from "fs";
 import path from "path";
+import { promisify } from "util";
 
-import { IEventCoverRepository } from "../../../repositories/interfaces/event-cover-repository";
 import { EventCoverModel } from "../../../models/event-cover.model";
+import { IEventCoverRepository } from "../../../repositories/interfaces/event-cover-repository";
+import { Codes } from "../../../utils/codes";
 import { HttpStatus } from "../../../utils/httpStatus";
 import { RequestWithAuth } from "../../../utils/types";
-import { Codes } from "../../../utils/codes";
 
 import * as responses from "../../../utils/formatters/responses";
 
@@ -63,7 +63,7 @@ export class UploadEventCoverController {
           key: filename,
           name: fieldname,
           size,
-          url: coverUrl,
+          url: encodeURIComponent(coverUrl),
         });
 
         const created = await this.eventCoverRepository.save(newCover);

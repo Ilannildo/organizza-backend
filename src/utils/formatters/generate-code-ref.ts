@@ -1,5 +1,5 @@
 export function generateReferenceCode(type: string): string {
-  let letters = type.slice(0, 3).toUpperCase();
+  let letters = type.slice(0, 2).toUpperCase();
   if (letters.length < 3) {
     const randomLetter = String.fromCharCode(
       Math.floor(Math.random() * 26) + 65

@@ -36,8 +36,6 @@ export class CreateSessionController {
         value,
         participant_limit,
         place,
-        start_date,
-        end_date,
         dates,
       } = request.body;
 
@@ -82,7 +80,7 @@ export class CreateSessionController {
       });
 
       const newsSessionDates: SessionDatesModel[] = [];
-      const sessionDates = dates as ISessionDatesForm[];
+      const sessionDates = dates;
 
       for (const date of sessionDates) {
         const newDate = new SessionDatesModel({

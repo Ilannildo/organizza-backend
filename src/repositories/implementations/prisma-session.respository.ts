@@ -34,7 +34,7 @@ export class PrismaSessionRepository implements ISessionRepository {
           },
           session_dates: {
             orderBy: {
-              position: "desc",
+              position: "asc",
             },
           },
           session_type: true,
@@ -63,9 +63,11 @@ export class PrismaSessionRepository implements ISessionRepository {
     });
     return sessions;
   }
+
   findById(ticket_id: string): Promise<SessionModel> {
     throw new Error("Method not implemented.");
   }
+
   async findByEventId(event_id: string): Promise<SessionModel[]> {
     const sessions = await client.session.findMany({
       where: {
@@ -77,6 +79,11 @@ export class PrismaSessionRepository implements ISessionRepository {
         session_subscriptions: true,
         session_tickets: true,
         session_type: true,
+        session_dates: {
+          orderBy: {
+            position: "asc",
+          },
+        },
       },
     });
     return sessions;
