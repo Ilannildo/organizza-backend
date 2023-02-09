@@ -92,7 +92,11 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         event_id: eventId,
       },
       include: {
-        ticket_service_order: true,
+        ticket_service_order: {
+          include: {
+            ticket: true,
+          },
+        },
       },
     });
     return subscription;

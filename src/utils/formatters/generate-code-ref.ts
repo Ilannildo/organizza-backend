@@ -13,3 +13,12 @@ export function generateReferenceCode(type: string): string {
 
   return `${letters}-${numbers}`;
 }
+
+export function getAreaCodeAndNumber(phoneNumber: string): {
+  areaCode: string;
+  number: string;
+} {
+  let areaCode = phoneNumber.slice(0, 2);
+  let number = phoneNumber.slice(2);
+  return { areaCode, number };
+}

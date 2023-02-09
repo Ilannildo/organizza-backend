@@ -67,26 +67,6 @@ export const pay = [
       code: Codes.REQUEST__INVALID_NAME,
       message: "Esse método de pagamento não é válido",
     }),
-  // body("payment_method_id")
-  //   .not()
-  //   .isEmpty()
-  //   .withMessage({
-  //     message: "O método de pagamento é obrigatório",
-  //     code: Codes.DOCUMENT__NOT_FOUND,
-  //     status: HttpStatus.UNPROCESSABLE_ENTITY,
-  //   })
-  //   .isUUID()
-  //   .withMessage({
-  //     status: HttpStatus.UNPROCESSABLE_ENTITY,
-  //     code: Codes.REQUEST__INVALID_NAME,
-  //     message: "Esse método de pagamento não é válido",
-  //   })
-  //   .custom(isValidPaymentMethod)
-  //   .withMessage({
-  //     message: "O tipo de pagamento não é aceito",
-  //     code: Codes.AUTH__INVALID_DOCUMENT,
-  //     status: HttpStatus.UNPROCESSABLE_ENTITY,
-  //   }),
   body("payment_type")
     .if(body("is_free").equals("false"))
     .not()

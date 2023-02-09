@@ -92,7 +92,6 @@ export class PayServiceOrderController {
       }
 
       // verifica se o evento já finalizou
-      // TODO: REMOVER ESSE COMENTÁRIO
       if (event.status === "finished") {
         return sendError(
           response,
@@ -328,7 +327,7 @@ export class PayServiceOrderController {
         }
 
         let subscription = new SubscriptionModel({
-          code_ref: "TESTE-123",
+          code_ref: generateReferenceCode(ticket.category_title),
           event_id: event.id,
           status: "pending",
           ticket_service_order_id: existsTicketServiceOrder.id,

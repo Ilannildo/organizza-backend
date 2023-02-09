@@ -1,5 +1,6 @@
 import axios from "axios";
-import { addMinutes, getUnixTime } from "date-fns";
+import { addMinutes } from "date-fns";
+import { getAreaCodeAndNumber } from "../../utils/formatters/generate-code-ref";
 import { calculateTicketFee } from "../../utils/roles";
 import {
   IPaymentGatewayServiceCreateOrderRequest,
@@ -150,8 +151,8 @@ export class PagarmeGateway implements IPaymentGatewayService {
           phones: {
             mobile_phone: {
               country_code: "55",
-              area_code: customer.phone.slice(0, 2),
-              number: customer.phone,
+              area_code: getAreaCodeAndNumber(customer.phone).areaCode,
+              number: getAreaCodeAndNumber(customer.phone).number,
             },
           },
           code: customer.email,
@@ -164,7 +165,6 @@ export class PagarmeGateway implements IPaymentGatewayService {
       };
 
       const response = await pagarmeApi.post("/orders", transactionParams);
-      
 
       const charge =
         response.data.charges.length > 0 ? response.data.charges[0] : null;
@@ -173,7 +173,7 @@ export class PagarmeGateway implements IPaymentGatewayService {
         throw new Error("Algo alconteceu na transação");
       }
 
-      console.log("PAGARME :::", charge);
+      console.log("PAGARME :::", response.request);
 
       return {
         processed_response: JSON.stringify(response.data),
@@ -182,10 +182,12 @@ export class PagarmeGateway implements IPaymentGatewayService {
         card:
           payment_method.payment_form === "credit"
             ? {
-                brand: charge.last_transaction.card.brand,
-                first_six_digits: charge.last_transaction.card.first_six_digits,
-                id: charge.last_transaction.card.id,
-                last_four_digits: charge.last_transaction.card.last_four_digits,
+                brand: charge.last_transaction?.card?.brand,
+                first_six_digits:
+                  charge.last_transaction?.card?.first_six_digits,
+                id: charge.last_transaction?.card?.id,
+                last_four_digits:
+                  charge.last_transaction?.card?.last_four_digits,
               }
             : null,
         pix:
@@ -193,7 +195,7 @@ export class PagarmeGateway implements IPaymentGatewayService {
             ? {
                 code: charge.last_transaction.qr_code,
                 qr_code_url: charge.last_transaction.qr_code_url,
-                expiration_date: charge.last_transaction.expires_at
+                expiration_date: charge.last_transaction.expires_at,
               }
             : null,
       };

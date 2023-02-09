@@ -1,14 +1,14 @@
 import { Response } from "express";
-import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
 import { IEventsRepository } from "../../../repositories/interfaces/event-repository";
-import { RequestWithAuth } from "../../../utils/types";
-import { HttpStatus } from "../../../utils/httpStatus";
-import { Codes } from "../../../utils/codes";
-import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
-import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
 import { IServiceOrderRepository } from "../../../repositories/interfaces/service-order-repository";
+import { ISubscriptionRepository } from "../../../repositories/interfaces/susbcription-repository";
+import { ITicketRepository } from "../../../repositories/interfaces/ticket-repository";
 import { ITicketServiceOrderRepository } from "../../../repositories/interfaces/ticket-service-order-repository";
 import { ITransactionRepository } from "../../../repositories/interfaces/transaction-repository";
+import { Codes } from "../../../utils/codes";
+import { sendError, sendSuccessful } from "../../../utils/formatters/responses";
+import { HttpStatus } from "../../../utils/httpStatus";
+import { RequestWithAuth } from "../../../utils/types";
 
 export class CloseServiceOrderController {
   constructor(
@@ -24,17 +24,13 @@ export class CloseServiceOrderController {
       // recebe o body da requisição
       const { order_id } = request.params;
 
-      const transaction = await this.transactionRepository.findById({
-        transaction_id: order_id,
-      });
+      const transaction =
+        await this.transactionRepository.findByExternalTransactionId({
+          transaction_id: order_id,
+        });
 
       if (!transaction) {
-        return sendError(
-          response,
-          Codes.ENTITY__NOT_FOUND,
-          "Essa ordem de serviço não existe",
-          HttpStatus.NOT_FOUND
-        );
+        return sendSuccessful(response, {}, HttpStatus.NO_CONTENT);
       }
 
       const serviceOrder = await this.serviceOrderRepository.findById({
@@ -42,12 +38,7 @@ export class CloseServiceOrderController {
       });
 
       if (!serviceOrder) {
-        return sendError(
-          response,
-          Codes.ENTITY__NOT_FOUND,
-          "Essa ordem de serviço não existe",
-          HttpStatus.NOT_FOUND
-        );
+        return sendSuccessful(response, {}, HttpStatus.NO_CONTENT);
       }
 
       // busca um ticket pelo id
@@ -57,12 +48,7 @@ export class CloseServiceOrderController {
 
       // se o ticket não existir, retorna um erro
       if (!ticket) {
-        return sendError(
-          response,
-          Codes.ENTITY__NOT_FOUND,
-          "Esse ingresso não existe",
-          HttpStatus.NOT_FOUND
-        );
+        return sendSuccessful(response, {}, HttpStatus.NO_CONTENT);
       }
 
       // busca um evento pelo id
@@ -70,17 +56,15 @@ export class CloseServiceOrderController {
 
       // se o evento não existir, retorna um erro
       if (!event) {
-        return sendError(
-          response,
-          Codes.ENTITY__NOT_FOUND,
-          "O evento desse ingresso não existe",
-          HttpStatus.NOT_FOUND
-        );
+        return sendSuccessful(response, {}, HttpStatus.NO_CONTENT);
       }
 
       // verifica as inscrições pelo id do usuário
       const userSubscription =
-        await this.subscriptionRepository.findOneByTicketId(ticket.id, "processing");
+        await this.subscriptionRepository.findOneByTicketId(
+          ticket.id,
+          "processing"
+        );
 
       if (!userSubscription) {
         return sendSuccessful(response, {}, HttpStatus.NO_CONTENT);

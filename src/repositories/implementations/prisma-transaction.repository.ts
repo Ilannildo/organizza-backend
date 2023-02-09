@@ -3,6 +3,29 @@ import { client } from "../../prisma/client";
 import { ITransactionRepository } from "../interfaces/transaction-repository";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
+  async findByExternalTransactionId(params: {
+    transaction_id: string;
+  }): Promise<TransactionModel> {
+    const transaction = await client.transaction.findFirst({
+      where: {
+        transaction_id: params.transaction_id,
+      },
+      include: {
+        payment_method: true,
+        service_order: {
+          include: {
+            ticket_service_order: {
+              include: {
+                ticket: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return transaction;
+  }
+
   async save(data: TransactionModel): Promise<TransactionModel> {
     const transaction = await client.transaction.create({
       data: {
@@ -35,12 +58,13 @@ export class PrismaTransactionRepository implements ITransactionRepository {
     });
     return transaction;
   }
+
   async findById(params: {
     transaction_id: string;
   }): Promise<TransactionModel> {
     const transaction = await client.transaction.findFirst({
       where: {
-        transaction_id: params.transaction_id,
+        id: params.transaction_id,
       },
       include: {
         payment_method: true,

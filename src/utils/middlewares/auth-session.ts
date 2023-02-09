@@ -16,6 +16,7 @@ export function authSessionMiddleware(
     "/api/event-page",
     "/api/event-page/tickets",
     "/api/event-page/sessions",
+    "/api/transactions/pagarme/webhook/order",
   ];
   const filesPath = "/files";
 
