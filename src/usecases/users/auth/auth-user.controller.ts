@@ -1,15 +1,16 @@
-import { Request, Response } from "express";
 import { compare } from "bcryptjs";
+import { Request, Response } from "express";
 
+import { EmailConfigs } from "../../../config/email";
+import { EmailTokenModel } from "../../../models/email-token.model";
+import { EmailTokenProvider } from "../../../providers/email-token.provider";
 import { GenerateAccessTokenProvider } from "../../../providers/generate-access-token.provider";
 import { IUsersRepository } from "../../../repositories/interfaces/user-repository";
-import { EmailTokenProvider } from "../../../providers/email-token.provider";
-import { EmailTokenModel } from "../../../models/email-token.model";
-import { HttpStatus } from "../../../utils/httpStatus";
-import { EmailConfigs } from "../../../config/email";
 import { Codes } from "../../../utils/codes";
+import { HttpStatus } from "../../../utils/httpStatus";
 
 import * as responses from "../../../utils/formatters/responses";
+import { logRequest } from "../../../utils/middlewares/log";
 
 export class AuthenticateUserController {
   constructor(
@@ -80,6 +81,17 @@ export class AuthenticateUserController {
       );
 
       delete userAlreadyExistsByEmail.password;
+
+      // create log to login
+      await logRequest({
+        request,
+        response,
+        user_id: userAlreadyExistsByEmail.uid,
+        description: "AUTH LOGIN",
+        response_body: {
+          access_token: accessToken,
+        },
+      });
 
       return responses.sendSuccessful(response, {
         access_token: accessToken,

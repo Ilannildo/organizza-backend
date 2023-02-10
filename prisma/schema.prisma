@@ -30,6 +30,7 @@ model User {
   session_subscriptions SessionSubscription[]
   service_orders        ServiceOrder[]
   recipient             Recipient?
+  logs                  Log[]
 
   @@map("users")
 }
@@ -497,6 +498,25 @@ model Transaction {
   service_order        ServiceOrder         @relation(fields: [service_order_id], references: [id])
 
   @@map("transactions")
+}
+
+model Log {
+  id               String   @id @default(uuid())
+  description      String?
+  request_method   String   @db.Text
+  request_url      String   @db.Text
+  request_headers  String   @db.Text
+  request_body     String   @db.Text
+  response_status  Int
+  response_headers String   @db.Text
+  response_body    String?  @db.Text
+  request_ip       String?
+  user_id          String
+  created_at       DateTime @default(now())
+  updated_at       DateTime @default(now()) @updatedAt
+  user             User     @relation(fields: [user_id], references: [uid])
+
+  @@map("logs")
 }
 
 enum EventVenueType {
