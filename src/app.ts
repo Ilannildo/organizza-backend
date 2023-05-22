@@ -17,6 +17,7 @@ import { handleJWTAuthentication } from "./utils/strategies/authenticate";
 
 import { eventPageRoutes } from "./routes/event-page.routes";
 import { eventPanelRoutes } from "./routes/event-panel.routes";
+import { homeRoutes } from "./routes/home.routes";
 import { serviceOrderRoutes } from "./routes/service-order.routes";
 import { sessionTypesRoutes } from "./routes/session-type.routes";
 import { subscriptionRoutes } from "./routes/subscription.routes";
@@ -122,5 +123,7 @@ app.use("/api/ticket-price-types", ticketTypeRoute);
 
 // adicionando as rotas de painel do evento
 app.use("/api/transactions", transactionRoutes);
+
+app.use("/api/home", homeRoutes);
 
 export { app };

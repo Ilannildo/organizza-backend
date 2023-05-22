@@ -1,5 +1,5 @@
-import { EventModel } from "../../models/event.model";
 import { EventResponsibleModel } from "../../models/event-responsible.model";
+import { EventModel } from "../../models/event.model";
 import { client } from "../../prisma/client";
 import { IEventsRepository } from "../interfaces/event-repository";
 
@@ -31,6 +31,28 @@ export class PrismaEventRepository implements IEventsRepository {
     });
 
     return event;
+  }
+  async findAllActivesAndPublic(): Promise<EventModel[]> {
+    const today = new Date();
+    const events = await client.event.findMany({
+      where: {
+        status: "published",
+        is_private: false,
+        start_date: {
+          lte: today,
+        },
+        end_date: {
+          gte: today,
+        },
+      },
+      include: {
+        subscriptions: true,
+        main_subject: true,
+        event_cover: true,
+      },
+    });
+
+    return events;
   }
   findAll(): Promise<EventModel[]> {
     throw new Error("Method not implemented.");
@@ -123,7 +145,7 @@ export class PrismaEventRepository implements IEventsRepository {
           subscriptions: true,
         },
         orderBy: {
-          created_at: "desc"
+          created_at: "desc",
         },
         skip,
         take: Number(limit),

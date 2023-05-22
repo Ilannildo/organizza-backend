@@ -1,5 +1,5 @@
-import { EventModel } from "../../models/event.model";
 import { EventResponsibleModel } from "../../models/event-responsible.model";
+import { EventModel } from "../../models/event.model";
 
 export interface IEventsRepository {
   findById(event_id: string): Promise<EventModel>;
@@ -15,6 +15,7 @@ export interface IEventsRepository {
   findByTitle(title: string): Promise<EventModel>;
   findBySlug(slug: string): Promise<EventModel>;
   findAll(): Promise<EventModel[]>;
+  findAllActivesAndPublic(): Promise<EventModel[]>;
   update(data: EventModel): Promise<EventModel>;
   save(
     data: EventModel,

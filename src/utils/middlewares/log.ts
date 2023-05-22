@@ -76,7 +76,7 @@ export async function logRequest({
         request_url: `${request.originalUrl}`,
         request_headers: JSON.stringify(request.headers),
         request_body: encryptedRequestBody,
-        request_ip: request.ip,
+        request_ip: request.socket.remoteAddress,
         response_status: response.statusCode,
         response_headers: JSON.stringify(response.getHeaders()),
         response_body: encryptedResponseBody,
