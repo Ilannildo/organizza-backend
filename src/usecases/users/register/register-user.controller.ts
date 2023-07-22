@@ -80,7 +80,13 @@ export class RegisterUserController {
       });
 
       await this.emailTokenProvider.execute(newEmailToken);
-      return responses.sendSuccessful(response, {});
+      return responses.sendSuccessful(
+        response,
+        {
+          message: "Conta criada com sucesso. Verifique o seu e-mail!",
+        },
+        HttpStatus.CREATED
+      );
     } catch (error) {
       return responses.sendError(
         response,

@@ -44,8 +44,13 @@ export class PrismaEmailTokenRepository implements IEmailTokenRepository {
 
     return saved;
   }
-  delete(user_id: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  async delete(user_id: string): Promise<boolean> {
+    const deleted = await client.emailToken.delete({
+      where: {
+        user_id
+      }
+    });
+    return !!deleted;
   }
   async edit(data: EmailTokenModel): Promise<EmailTokenModel> {
     const updated = await client.emailToken.update({
